@@ -13,6 +13,6 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
-scrips/crawler/node_modules
-scrips/scanner/node_modules
-scrips/import-rules/node_modules
+scripts/crawler/node_modules
+scripts/scanner/node_modules
+scripts/import-rules/node_modules
