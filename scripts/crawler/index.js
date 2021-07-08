@@ -9,6 +9,21 @@ const data = [];
 const crawledUrls = [];
 const urls = [];
 
+const api_token = 'Bearer aBBAsR7fzCih9lni1iata232u4HRy3w7bIhoScQY';
+
+const axios = require('axios');
+
+axios.get('http://localhost/api/website', {
+  headers: {
+    'Authorization': api_token
+  }
+}).then((response) => {
+  console.log(response);
+});
+
+
+
+
 
 /**
  * Finds all anchors on the page, inclusive of those within shadow roots.
