@@ -48,9 +48,7 @@ class Team extends JetstreamTeam
     public function websites()
     {
         return $this->hasMany(
-            Website::class,
-            'team_id',
-            'id'
+            Website::class
         );
     }
 }

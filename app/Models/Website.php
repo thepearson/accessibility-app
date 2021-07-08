@@ -24,10 +24,9 @@ class Website extends Model
      */
     public function team()
     {
-        return $this->hasOne(
+        return $this->belongsTo(
             Team::class,
-            'id',
-            'team_id',
+            'team_id'
         );
     }
 }

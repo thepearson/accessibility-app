@@ -20,10 +20,6 @@ class DevWebsitesSeeder extends Seeder
         $website = new Website;
         $website->name = "Ministry of Education";
         $website->base_url = "https://education.govt.nz/";
-        $website->save();
-        
-        $website->team = $user->personalTeam();
-
-        
+        $user->personalTeam()->websites()->save($website);
     }
 }
