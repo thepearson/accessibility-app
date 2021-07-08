@@ -9,11 +9,25 @@ class Website extends Model
 {
     use HasFactory;
 
-    * The attributes that are mass assignable.
-    *
-    * @var array
-    */
-   protected $fillable = [
-       'name', 'url'
-   ];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name', 'url'
+    ];
+
+
+    /**
+     * Team relationship
+     */
+    public function team()
+    {
+        return $this->hasOne(
+            Team::class,
+            'id',
+            'team_id',
+        );
+    }
 }

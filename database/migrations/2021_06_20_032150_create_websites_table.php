@@ -15,10 +15,14 @@ class CreateWebsitesTable extends Migration
     {
         Schema::create('websites', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('team_id');
+            $table->foreignId('team_id')->nullable()->default(null);
             $table->string('name');
-            $table->string('url');
+            $table->string('base_url');
             $table->timestamps();
+
+            $table->foreign('team_id')
+                ->references('id')
+                ->on('teams');
         });
     }
 

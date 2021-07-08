@@ -41,4 +41,16 @@ class Team extends JetstreamTeam
         'updated' => TeamUpdated::class,
         'deleted' => TeamDeleted::class,
     ];
+
+    /**
+     * Websites
+     */
+    public function websites()
+    {
+        return $this->hasMany(
+            Website::class,
+            'team_id',
+            'id'
+        );
+    }
 }
