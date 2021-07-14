@@ -3,7 +3,6 @@ const puppeteer = require('puppeteer');
 const { AxePuppeteer } = require('@axe-core/puppeteer');
 
 const VIEWPORT = {width: 1920, height: 1080, deviceScaleFactor: 2};
-const BASE_URL = process.env.BASE_URL || 'https://www.pixelite.co.nz/';
 
 const data = [];
 const crawledUrls = [];
@@ -13,13 +12,13 @@ const api_token = 'Bearer aBBAsR7fzCih9lni1iata232u4HRy3w7bIhoScQY';
 
 const axios = require('axios');
 
-axios.get('http://localhost/api/website', {
-  headers: {
-    'Authorization': api_token
-  }
-}).then((response) => {
-  console.log(response);
-});
+// axios.get('http://localhost/api/website', {
+//   headers: {
+//     'Authorization': api_token
+//   }
+// }).then((response) => {
+//   console.log(response);
+// });
 
 
 
@@ -69,7 +68,7 @@ function collectAllSameOriginAnchorsDeep(sameOrigin = true) {
  * @param {*} url
  * @param {*} callback
  */
-async function crawl(page, url, callback) {
+async function crawl(page, url, options, responseCallback, linkCallback = null) {
 
   // if url is yet to be crawled, lets crawl it.
   if (crawledUrls.indexOf(url) < 0) {
@@ -78,19 +77,19 @@ async function crawl(page, url, callback) {
       waitUntil: 'networkidle0'
     });
 
-    const results = await new AxePuppeteer(page).analyze();
-    console.log(JSON.stringify(results.violations, undefined, 2));
-
     // Get all the damn links, and add them to the damn list.
     const anchors = await page.evaluate(collectAllSameOriginAnchorsDeep);
     for (let link of anchors) {
       if (urls.indexOf(link) < 0) {
-        urls.push(link);
+        if (options.recursive) {
+          urls.push(url);
+        }
+        linkCallback(link, options.callback);
       }
     }
 
     // Process the URL
-    callback(url, page);
+    responseCallback(url, page);
 
     crawledUrls.push(url);
 
@@ -100,6 +99,10 @@ async function crawl(page, url, callback) {
 }
 
 
+const handleNewLink = async function(url) {
+  console.log(url);
+}
+
 /**
  * Callback used to process the page response.
  *
@@ -107,11 +110,22 @@ async function crawl(page, url, callback) {
  * @param {*} page
  */
 const handleResponse = async function(url, page) {
-  console.log(url);
+  const results = await new AxePuppeteer(page).analyze();
+  console.log(JSON.stringify(results.violations, undefined, 2));
+  //console.log(url);
 };
 
 
 (async () => {
+  const options = {
+    base_url: 'https://pixelite.co.nz',
+    recursive: data.recursive,
+    callback: {
+      url: 'https://',
+      auth: 'Bearer 1234abcd'
+    }
+  }
+
   const browser = await puppeteer.launch({
     ignoreHTTPSErrors: true
   });
@@ -125,12 +139,12 @@ const handleResponse = async function(url, page) {
 
   try {
     // Init the first url
-    urls.push(BASE_URL);
+    urls.push(options.base_url);
 
     while (urls.length > crawledUrls.length) {
       // Just keep iterating until it's done, this will skip already crawled urls.
       for (const url of urls) {
-        await crawl(page, url, handleResponse);
+        await crawl(page, url, options, handleResponse, handleNewLink);
       }
     }
   } catch (e) {

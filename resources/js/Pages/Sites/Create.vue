@@ -2,15 +2,13 @@
     <app-layout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Landing Page
+                Add a website
             </h2>
         </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                    
-                </div>
+                <create-website-form />
             </div>
         </div>
     </app-layout>
@@ -18,10 +16,12 @@
 
 <script>
     import AppLayout from '@/Layouts/AppLayout'
+    import CreateWebsiteForm from './CreateWebsiteForm';
 
     export default {
         components: {
-            AppLayout
+            AppLayout,
+            CreateWebsiteForm,
         },
     }
 </script>

@@ -31,4 +31,16 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 })->name('dashboard');
 
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dash', [WebsiteController::class, 'index']);
+Route::middleware(['auth:sanctum', 'verified'])
+    ->get('/sites', [WebsiteController::class, 'index'])
+    ->name('sites.list');
+
+Route::middleware(['auth:sanctum', 'verified'])
+    ->get('/sites/add', [WebsiteController::class, 'add'])
+    ->name('sites.add');
+
+Route::inertia('/sites/add', 'Sites/Create');
+
+Route::middleware(['auth:sanctum', 'verified'])
+    ->post('/sites/add', [WebsiteController::class, 'add'])
+    ->name('sites.add');
