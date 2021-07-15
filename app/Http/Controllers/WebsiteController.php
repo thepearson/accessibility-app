@@ -27,4 +27,9 @@ class WebsiteController extends Controller
 
         return Redirect::route('sites.list');
     }
+
+    public function delete(Request $request, $id) {
+        Website::find($id)->delete();
+        return Redirect::route('sites.list');
+    }
 }

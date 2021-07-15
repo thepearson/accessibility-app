@@ -44,3 +44,7 @@ Route::inertia('/sites/add', 'Sites/Create');
 Route::middleware(['auth:sanctum', 'verified'])
     ->post('/sites/add', [WebsiteController::class, 'add'])
     ->name('sites.add');
+
+Route::middleware(['auth:sanctum', 'verified'])
+    ->delete('/sites/delete/{id}', [WebsiteController::class, 'delete'])
+    ->name('sites.delete');
