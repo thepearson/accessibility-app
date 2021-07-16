@@ -32,4 +32,22 @@ class WebsiteController extends Controller
         Website::find($id)->delete();
         return Redirect::route('sites.list');
     }
+
+    public function settings(Request $request) {
+        
+    }
+
+    public function urls(Request $request, $id) {
+        $website = Website::find($id)->first();
+        return Inertia::render('Sites/Urls', [
+            'website' => $website,
+            'urls' => $website->urls()
+        ]);
+    }
+
+    public function show(Request $request, $id) {
+        return Inertia::render('Sites/List', [
+            'website' => Website::find($id)->get(),
+        ]);
+    }
 }

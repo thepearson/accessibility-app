@@ -36,8 +36,20 @@ Route::middleware(['auth:sanctum', 'verified'])
     ->name('sites.list');
 
 Route::middleware(['auth:sanctum', 'verified'])
+    ->get('/sites/{id}', [WebsiteController::class, 'show'])
+    ->name('sites.show');    
+
+Route::middleware(['auth:sanctum', 'verified'])
+    ->get('/sites/{id}/urls', [WebsiteController::class, 'urls'])
+    ->name('sites.urls');  
+
+Route::middleware(['auth:sanctum', 'verified'])
     ->get('/sites/add', [WebsiteController::class, 'add'])
     ->name('sites.add');
+
+Route::middleware(['auth:sanctum', 'verified'])
+    ->get('/sites/settings', [WebsiteController::class, 'settings'])
+    ->name('sites.settings');
 
 Route::inertia('/sites/add', 'Sites/Create');
 

@@ -2,7 +2,7 @@
     <app-layout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Websites
+                Website URLs
             </h2>
         </template>
 
@@ -11,27 +11,15 @@
 
                 <div class="table w-full">
                     <div class="table-row-group">
-                        <template v-for="website in websites" v-bind:key="website.id">
-                            <div class="bg-white p-6 rounded-lg shadow-lg mb-6 flex flex-col">
+                        <template v-for="url in urls" v-bind:key="url.id">
+                            <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
                                 <div class="flex flex-row">
                                     <div class="flex-grow">
-                                        <inertia-link :href="route('sites.show', {id: website.id})"><h2 class="text-2xl font-bold mb-2 text-gray-800">{{website.name}}</h2></inertia-link>
-                                        <p class="text-gray-700">{{website.base_url}}</p>
+                                        <inertia-link :href="route('sites.show', {id: url.id})"><h2 class="text-2xl font-bold mb-2 text-gray-800">{{url.url}}</h2></inertia-link>
                                     </div>
-                                    <div class="flex flex-row">
-                                        <inertia-link :href="route('sites.urls', { id: website.id })">
-                                            Urls
-                                        </inertia-link>
-                                        <inertia-link :href="route('sites.settings')">
-                                            Settings
-                                        </inertia-link>
-                                        <button class="cursor-pointer ml-6 text-sm text-red-500" @click="confirmSiteDeletion(website)">
-                                            Delete
-                                        </button>
+                                    <div class="">
+                                        x
                                     </div>
-                                </div>
-                                <div class="">
-
                                 </div>
                             </div>
                         </template>
@@ -42,7 +30,7 @@
         </div>
     </app-layout>
     
-    <!-- Delete Token Confirmation Modal -->
+    <!-- Delete Token Confirmation Modal
     <jet-confirmation-modal :show="siteBeingDeleted" @close="siteBeingDeleted = null">
         <template #title>
             Delete API Token
@@ -61,7 +49,7 @@
                 Delete
             </jet-danger-button>
         </template>
-    </jet-confirmation-modal>
+    </jet-confirmation-modal> -->
 </template>
 
 <script>
@@ -73,7 +61,8 @@
 
     export default {
         props: [
-            'websites',
+            'website',
+            'urls',
         ],
         components: {
             AppLayout,
@@ -82,26 +71,26 @@
             JetDangerButton,
             CreateWebsiteForm,
         },
-        data() {
-            return {
-                deleteSiteForm: this.$inertia.form(),
-                siteBeingDeleted: null,
-            }
-        },
-        methods: {
-            confirmSiteDeletion(site) {
-                this.siteBeingDeleted = site
-            },
+        // data() {
+        //     return {
+        //         deleteSiteForm: this.$inertia.form(),
+        //         siteBeingDeleted: null,
+        //     }
+        // },
+        // methods: {
+        //     confirmSiteDeletion(site) {
+        //         this.siteBeingDeleted = site
+        //     },
 
-            deleteSite() {
-                this.deleteSiteForm.delete(route('sites.delete', {
-                        id: this.siteBeingDeleted.id
-                }), {
-                    preserveScroll: true,
-                    preserveState: true,
-                    onSuccess: () => (this.siteBeingDeleted = null),
-                })
-            },
-        }
+        //     deleteSite() {
+        //         this.deleteSiteForm.delete(route('sites.delete', {
+        //                 id: this.siteBeingDeleted.id
+        //         }), {
+        //             preserveScroll: true,
+        //             preserveState: true,
+        //             onSuccess: () => (this.siteBeingDeleted = null),
+        //         })
+        //     },
+        // }
     }
 </script>

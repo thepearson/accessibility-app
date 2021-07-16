@@ -29,4 +29,13 @@ class Website extends Model
             'team_id'
         );
     }
+
+    
+    /**
+     * Team relationship
+     */
+    public function urls()
+    {
+        return $this->hasMany(Url::class);
+    }
 }
