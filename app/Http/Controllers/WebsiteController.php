@@ -18,6 +18,7 @@ class WebsiteController extends Controller
         $request->validate([
             'name' => 'required|string|min:4',
             'base_url' => 'required|url|min:12',
+            'autoscan' => 'sometimes|boolean'
         ]);
 
         $website = new Website;

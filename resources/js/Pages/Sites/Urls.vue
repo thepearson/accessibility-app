@@ -8,24 +8,32 @@
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
-                <div class="table w-full">
-                    <div class="table-row-group">
-                        <template v-for="url in urls" v-bind:key="url.id">
-                            <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-                                <div class="flex flex-row">
-                                    <div class="flex-grow">
-                                        <inertia-link :href="route('sites.show', {id: url.id})"><h2 class="text-2xl font-bold mb-2 text-gray-800">{{url.url}}</h2></inertia-link>
-                                    </div>
-                                    <div class="">
-                                        x
-                                    </div>
+                <template v-if="urls.length > 0">
+                    <template v-for="url in urls" v-bind:key="url.id">
+                        <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+                            <div class="flex flex-row">
+                                <div class="flex-grow">
+                                    <inertia-link :href="route('sites.show', {id: url.id})"><h2 class="text-2xl font-bold mb-2 text-gray-800">{{url.url}}</h2></inertia-link>
+                                </div>
+                                <div class="">
+                                    x
                                 </div>
                             </div>
-                        </template>
-                    </div>
-                </div>
-            
+                        </div>
+                    </template>
+                </template>
+                <template v-else>
+                    <h2>There aren't any URLs yet</h2>
+                    <h3>Scan for site URLs?</h3>
+
+                    <jet-button class="ml-2" @click="scanSiteUrls(true)">
+                        Automatic
+                    </jet-button>
+
+                    <jet-secondary-button @click="scanSiteUrls(false)">
+                        Interactive
+                    </jet-secondary-button>
+                </template>
             </div>
         </div>
     </app-layout>
@@ -54,10 +62,10 @@
 
 <script>
     import AppLayout from '@/Layouts/AppLayout'
+    import JetButton from '@/Jetstream/Button'
     import JetConfirmationModal from '@/Jetstream/ConfirmationModal'
     import JetSecondaryButton from '@/Jetstream/SecondaryButton'
     import JetDangerButton from '@/Jetstream/DangerButton'
-    import CreateWebsiteForm from './CreateWebsiteForm';
 
     export default {
         props: [
@@ -66,31 +74,31 @@
         ],
         components: {
             AppLayout,
+            JetButton,
             JetConfirmationModal,
             JetSecondaryButton,
             JetDangerButton,
-            CreateWebsiteForm,
         },
-        // data() {
-        //     return {
-        //         deleteSiteForm: this.$inertia.form(),
-        //         siteBeingDeleted: null,
-        //     }
-        // },
-        // methods: {
-        //     confirmSiteDeletion(site) {
-        //         this.siteBeingDeleted = site
-        //     },
+        data() {
+            return {
+                deleteSiteForm: this.$inertia.form(),
+                siteBeingScanned: false,
+            }
+        },
+        methods: {
+            confirmSiteDeletion(site) {
+                this.siteBeingScanned = site
+            },
 
-        //     deleteSite() {
-        //         this.deleteSiteForm.delete(route('sites.delete', {
-        //                 id: this.siteBeingDeleted.id
-        //         }), {
-        //             preserveScroll: true,
-        //             preserveState: true,
-        //             onSuccess: () => (this.siteBeingDeleted = null),
-        //         })
-        //     },
-        // }
+            scanSiteUrls() {
+                this.deleteSiteForm.delete(route('sites.delete', {
+                        id: this.siteBeingDeleted.id
+                }), {
+                    preserveScroll: true,
+                    preserveState: true,
+                    onSuccess: () => (this.siteBeingDeleted = null),
+                })
+            },
+        }
     }
 </script>
