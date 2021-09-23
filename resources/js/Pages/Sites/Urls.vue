@@ -8,6 +8,15 @@
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="p-6 mb-6 flex justify-end">
+                    <jet-button class="cursor-pointer ml-6 text-sm text-white-500" @click="scanSiteUrls(true)">
+                        Automaticly discover
+                    </jet-button>
+
+                    <jet-button class="cursor-pointer ml-6 text-sm text-white-500" @click="addSite()">
+                        Manually add a url
+                    </jet-button>
+                </div>
                 <template v-if="urls.length > 0">
                     <template v-for="url in urls" v-bind:key="url.id">
                         <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
@@ -23,16 +32,12 @@
                     </template>
                 </template>
                 <template v-else>
-                    <h2>There aren't any URLs yet</h2>
-                    <h3>Scan for site URLs?</h3>
-
-                    <jet-button class="ml-2" @click="scanSiteUrls(true)">
-                        Automatic
-                    </jet-button>
-
-                    <jet-secondary-button @click="scanSiteUrls(false)">
-                        Interactive
-                    </jet-secondary-button>
+                    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+                        <div>
+                            <h2>There's nothing here</h2>
+                            <h3>Scan your site for urls.</h3>
+                        </div>
+                    </div>
                 </template>
             </div>
         </div>

@@ -110,16 +110,16 @@ const handleNewLink = async function(url) {
  * @param {*} page
  */
 const handleResponse = async function(url, page) {
-  const results = await new AxePuppeteer(page).analyze();
-  console.log(JSON.stringify(results.violations, undefined, 2));
+  //const results = await new AxePuppeteer(page).analyze();
+  //console.log(JSON.stringify(results.violations, undefined, 2));
   //console.log(url);
 };
 
 
 (async () => {
   const options = {
-    base_url: 'https://pixelite.co.nz',
-    recursive: data.recursive,
+    base_url: 'https://www.education.govt.nz',
+    recursive: true,
     callback: {
       url: 'https://',
       auth: 'Bearer 1234abcd'

@@ -23,9 +23,9 @@
                                 <inertia-link class="cursor-pointer ml-6 text-sm" :href="route('sites.urls', { id: website.id })">
                                     Urls
                                 </inertia-link>
-                                <inertia-link class="cursor-pointer ml-6 text-sm" :href="route('sites.settings')">
+                                <!-- <inertia-link class="cursor-pointer ml-6 text-sm" :href="route('sites.settings')">
                                     Settings
-                                </inertia-link>
+                                </inertia-link> -->
                                 <button class="cursor-pointer ml-6 text-sm text-red-500" @click="confirmSiteDeletion(website)">
                                     Delete
                                 </button>
