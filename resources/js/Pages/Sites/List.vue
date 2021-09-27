@@ -20,7 +20,7 @@
                                 <p class="text-gray-700">{{website.base_url}}</p>
                             </div>
                             <div class="flex flex-col items-end">
-                                <inertia-link class="cursor-pointer ml-6 text-sm" :href="route('sites.urls', { id: website.id })">
+                                <inertia-link class="cursor-pointer ml-6 text-sm" :href="route('sites.urls.list', { id: website.id })">
                                     Urls
                                 </inertia-link>
                                 <!-- <inertia-link class="cursor-pointer ml-6 text-sm" :href="route('sites.settings')">
@@ -41,7 +41,7 @@
         </div>
     </app-layout>
     
-    <!-- Delete Token Confirmation Modal -->
+    <!-- Delete Website Confirmation Modal -->
     <jet-confirmation-modal :show="siteBeingDeleted" @close="siteBeingDeleted = null">
         <template #title>
             Delete website?

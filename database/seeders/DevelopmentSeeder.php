@@ -16,6 +16,7 @@ class DevelopmentSeeder extends Seeder
         $this->call([
             DevAccountsSeeder::class,
             DevWebsitesSeeder::class,
+            DevUrlsSeeder::class,
         ]);
     }
 }

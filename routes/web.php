@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 use App\Http\Controllers\WebsiteController;
+use App\Http\Controllers\UrlController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,14 +43,6 @@ Route::middleware(['auth:sanctum', 'verified'])
     ->name('sites.show');    
 
 Route::middleware(['auth:sanctum', 'verified'])
-    ->get('/sites/{id}/urls', [WebsiteController::class, 'urls'])
-    ->name('sites.urls');  
-
-// Route::middleware(['auth:sanctum', 'verified'])
-//     ->get('/sites/add', [WebsiteController::class, 'add'])
-//     ->name('sites.add');
-
-Route::middleware(['auth:sanctum', 'verified'])
     ->get('/sites/settings', [WebsiteController::class, 'settings'])
     ->name('sites.settings');
 
@@ -60,3 +53,19 @@ Route::middleware(['auth:sanctum', 'verified'])
 Route::middleware(['auth:sanctum', 'verified'])
     ->delete('/sites/delete/{id}', [WebsiteController::class, 'delete'])
     ->name('sites.delete');
+
+Route::middleware(['auth:sanctum', 'verified'])
+    ->get('/sites/{id}/urls', [UrlController::class, 'index'])
+    ->name('sites.urls.list');
+
+Route::middleware(['auth:sanctum', 'verified'])
+    ->post('/sites/{id}/urls/add', [UrlController::class, 'add'])
+    ->name('sites.urls.add');
+
+Route::middleware(['auth:sanctum', 'verified'])
+    ->post('/sites/{id}/urls/scan', [UrlController::class, 'scan'])
+    ->name('sites.urls.scan');
+
+Route::middleware(['auth:sanctum', 'verified'])
+    ->delete('/sites/{id}/urls/{url_id}/delete', [UrlController::class, 'delete'])
+    ->name('sites.urls.delete');

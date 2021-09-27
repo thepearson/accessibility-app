@@ -38,14 +38,6 @@ class WebsiteController extends Controller
         
     }
 
-    public function urls(Request $request, $id) {
-        $website = Website::find($id)->first();
-        return Inertia::render('Sites/Urls', [
-            'website' => $website,
-            'urls' => $website->urls()
-        ]);
-    }
-
     public function show(Request $request, $id) {
         return Inertia::render('Sites/List', [
             'website' => Website::find($id)->get(),
