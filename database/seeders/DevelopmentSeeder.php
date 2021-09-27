@@ -17,6 +17,7 @@ class DevelopmentSeeder extends Seeder
             DevAccountsSeeder::class,
             DevWebsitesSeeder::class,
             DevUrlsSeeder::class,
+            DevJobsSeeder::class,
         ]);
     }
 }

@@ -16,10 +16,10 @@ class CreateJobsTable extends Migration
         Schema::create('jobs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('website_id');
-            $table->string('key');
-            $table->string('type');
-            $table->string('data');
-            $table->string('status');
+            $table->string('token');
+            $table->enum('type', ['crawl', 'scan']);
+            $table->json('data');
+            $table->enum('status', ['queued', 'processing', 'success', 'failed']);
             $table->timestamps();
             $table->foreign('website_id')
                 ->references('id')

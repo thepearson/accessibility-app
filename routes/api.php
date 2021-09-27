@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Website;
+use App\Http\Controllers\JobController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -29,4 +30,5 @@ Route::middleware('auth:sanctum')->get('/website', function (Request $request) {
     return response()->json(['error' => 'Unauthenticated.'], 401);
 });
 
-
+// Called by the workers to update the state of a job
+Route::middleware('validJobToken')->post('/job/update', [JobController::class, 'update']);
