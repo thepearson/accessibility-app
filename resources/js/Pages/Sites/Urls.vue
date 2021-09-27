@@ -183,7 +183,7 @@
             },
 
             autoScan() {
-                this.deleteUrlForm.delete(route('sites.urls.scan', {
+                this.deleteUrlForm.post(route('sites.urls.scan', {
                         id: this.website.id,
                 }), {
                     preserveScroll: true,

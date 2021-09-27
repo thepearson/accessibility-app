@@ -19880,7 +19880,7 @@ __webpack_require__.r(__webpack_exports__);
     autoScan: function autoScan() {
       var _this2 = this;
 
-      this.deleteUrlForm["delete"](route('sites.urls.scan', {
+      this.deleteUrlForm.post(route('sites.urls.scan', {
         id: this.website.id
       }), {
         preserveScroll: true,

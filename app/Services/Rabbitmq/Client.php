@@ -17,7 +17,7 @@ class Client
     /**
      * Connect to the queue
      */
-    public function connect($channel) 
+    public function connect() 
     {
         $this->connection = new AMQPStreamConnection(
             $this->host, 
@@ -37,6 +37,13 @@ class Client
         $this->channel->queue_declare($queue, false, true, false, false);
         $message = new AMQPMessage(json_encode($payload));
         $this->channel->basic_publish($message, '', $queue);
+    }
+
+    /**
+     * Close the connection
+     */
+    public function close()
+    {
         $this->channel->close();
     }
 }

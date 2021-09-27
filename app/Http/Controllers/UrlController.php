@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Url;
+use App\Models\Job;
 use App\Models\Website;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
+use App\Services\Rabbitmq\Client;
 
 class UrlController extends Controller
 {
@@ -41,11 +43,43 @@ class UrlController extends Controller
         return Redirect::route('sites.urls.list', [ 'id' => $id ]);
     }
 
-    public function scan(Request $request, $id) {
+    /**
+     * 
+     */
+    public function scan(Request $request, Client $client, $id) {
+
+        Url::where('website_id', $id)->delete();
+
+        $website = Website::find($id);
+
+        $type = 'crawl';
+        $job = Job::create($type);
         
+        $message = [
+            'base_url' => $website->base_url
+        ];
+
+        // Update base job
+        $job->data = json_encode($message);
+        $job->website_id = $website->id;
+
+        $message['meta'] = [
+            'token' => $job->token,
+            'hostname' => env('CALLBACK_HOST', 'http://localhost'),
+            'status' => '/api/job/update',
+            'data' => "/api/sites/{$website->id}/urls"
+        ];
+
+        // Queue the AMPQ reqquest
+        $client->connect();
+        $client->message(json_encode($message), $type);
+
+        // Save the job
+        $job->save();
+
+        return Redirect::route('sites.urls.list', [ 'id' => $website->id ]);
     }
 
-    
     public function addUrls(Request $request, $id) {
         // Get JSON data from body 
         $data = $request->json()->all();
