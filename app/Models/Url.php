@@ -9,6 +9,10 @@ class Url extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'url', 'website_id'
+    ];
+
     /**
      * Team relationship
      */

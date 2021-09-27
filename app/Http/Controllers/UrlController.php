@@ -6,6 +6,8 @@ use App\Models\Url;
 use App\Models\Website;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 
 class UrlController extends Controller
@@ -25,7 +27,8 @@ class UrlController extends Controller
         ]);
 
         $website = Website::find($id);
-        $url = new Url();
+        
+        $url = new Url;
         $url->url = $request->input('url');
         $url->website_id = $website->id;
         $url->save();
@@ -40,5 +43,40 @@ class UrlController extends Controller
 
     public function scan(Request $request, $id) {
         
+    }
+
+    
+    public function addUrls(Request $request, $id) {
+        // Get JSON data from body 
+        $data = $request->json()->all();
+
+        // Set some validation rules for the submitted data
+        $rules = [
+            'urls' => [
+                'required',
+                'array'
+            ]
+        ];
+
+        // Validate the request
+        $validator = Validator::make($data, $rules);
+        if ($validator->fails()) {
+            return response()->json([
+                "error" => "Invalid request", 
+                "messages" => $validator->getMessageBag()
+            ], 400);
+        }
+
+        // Create the URLS
+        $website = Website::find($id);
+        foreach ($data['urls'] as $u) {
+            if (strlen(trim($u)) > 0) {
+                $url = Url::firstOrNew(['url' => $u, 'website_id' => $website->id]);
+                $url->save();
+            }
+        }
+
+        // Respond
+        return response()->json(["message" => "Successfully added urls"]);
     }
 }
