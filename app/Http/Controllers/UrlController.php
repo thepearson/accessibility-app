@@ -14,14 +14,26 @@ use App\Services\Rabbitmq\Client;
 
 class UrlController extends Controller
 {
+    /**
+     * List all URLS
+     */
     public function index(Request $request, $id) {
         $website = Website::find($id);
+
+        $job = Job::where('website_id', $id)
+            ->where('type', 'crawl')
+            ->whereIn('status', ['queued', 'processing'])->first();
+    
         return Inertia::render('Sites/Urls', [
             'website' => $website,
-            'urls' => $website->urls
+            'urls' => $website->urls,
+            'active_job' => $job
         ]);
     }
 
+    /**
+     * Web route for adding a URL
+     */
     public function add(Request $request, $id) {
         $request->validate([
             'url' => 'required|string|min:1',
@@ -38,6 +50,10 @@ class UrlController extends Controller
         return Redirect::route('sites.urls.list', [ 'id' => $website->id ]);
     }
 
+
+    /**
+     * Web route for deleting a URL
+     */
     public function delete(Request $request, $id, $url_id) {
         Url::find($url_id)->delete();
         return Redirect::route('sites.urls.list', [ 'id' => $id ]);

@@ -9,8 +9,10 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="p-6 mb-6 flex justify-end">
-                    <jet-button class="cursor-pointer ml-6 text-sm text-white-500" @click="scanSiteUrls()">
+                    <jet-button :disabled="active_job" class="cursor-pointer ml-6 text-sm text-white-500" @click="scanSiteUrls()">
                         Automaticly discover
+
+                        <div class="loader" v-show="active_job">working...</div>
                     </jet-button>
 
                     <jet-button class="cursor-pointer ml-6 text-sm text-white-500" @click="addUrl()">
@@ -122,11 +124,13 @@
     import JetInput from '@/Jetstream/Input'
     import JetInputError from '@/Jetstream/InputError'
     import JetLabel from '@/Jetstream/Label'
+    import { Inertia } from '@inertiajs/inertia'
 
     export default {
         props: [
             'website',
-            'urls'
+            'urls',
+            'active_job',
         ],
         components: {
             AppLayout,
@@ -141,6 +145,7 @@
         },
         data() {
             return {
+                interval: null,
                 deleteUrlForm: this.$inertia.form(),
                 scanForm: this.$inertia.form(),
                 urlBeingDeleted: null,
@@ -155,6 +160,19 @@
             }
         },
         methods: {
+
+            updateData() {
+                this.$inertia.reload({ preserveState: true , preserveScroll: true })  // read about the possible options under manual visits.
+            },
+            created() {
+                this.interval = setInterval(function () {
+                    this.updateData();
+                }.bind(this), 1000);  // set 1000 to any number you need
+            },
+            beforeDestroy() {
+                clearInterval(this.interval); // this is important!
+            },
+
             confirmUrlDeletion(url) {
                 this.urlBeingDeleted = url
             },
@@ -164,6 +182,7 @@
             },
 
             addUrl() {
+                console.log(this.active_job);
                 this.addNewUrl = true
             },
 
