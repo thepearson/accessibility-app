@@ -126,6 +126,12 @@
     import JetLabel from '@/Jetstream/Label'
     import { Inertia } from '@inertiajs/inertia'
 
+    // Inertia.on('success', (event) => {
+    //     this.interval = setInterval(function () {
+    //         console.log("Craig");
+    //     }.bind(this), 5000);  // set 1000 to any number you need
+    // });
+
     export default {
         props: [
             'website',
@@ -143,6 +149,16 @@
             JetSecondaryButton,
             JetDangerButton,
         },
+        mounted() {
+            if (this.active_job) {
+                this.interval = this.startPoll();  
+            }
+        },
+
+        unmounted() {
+            this.endPoll();
+        },
+
         data() {
             return {
                 interval: null,
@@ -162,19 +178,27 @@
         methods: {
 
             updateData() {
-                this.$inertia.reload({ preserveState: true , preserveScroll: true })  // read about the possible options under manual visits.
+                this.$inertia.reload({ 
+                    preserveState: true,
+                    preserveScroll: true,
+                    onSuccess: page => {
+                        console.log(page);
+                        if (!page.props.active_job) {
+                            this.endPoll();
+                        }
+                    }
+                });
             },
-            created() {
-                this.interval = setInterval(function () {
-                    this.updateData();
-                }.bind(this), 1000);  // set 1000 to any number you need
+            startPoll() {
+                return setInterval(function() {
+                    this.updateData(); 
+                }.bind(this), 2500)
             },
-            beforeDestroy() {
-                clearInterval(this.interval); // this is important!
+            endPoll() {
+                clearInterval(this.interval);
             },
-
             confirmUrlDeletion(url) {
-                this.urlBeingDeleted = url
+                this.urlBeingDeleted = url;
             },
 
             closeAddUrl() {
@@ -207,7 +231,10 @@
                 }), {
                     preserveScroll: true,
                     preserveState: true,
-                    onSuccess: () => (this.showScanModal = false),
+                    onSuccess: () => {
+                        this.showScanModal = null;
+                        this.interval = this.startPoll();
+                    },
                 })
             },
 

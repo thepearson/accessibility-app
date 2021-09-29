@@ -19823,6 +19823,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+ // Inertia.on('success', (event) => {
+//     this.interval = setInterval(function () {
+//         console.log("Craig");
+//     }.bind(this), 5000);  // set 1000 to any number you need
+// });
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['website', 'urls', 'active_job'],
@@ -19836,6 +19841,14 @@ __webpack_require__.r(__webpack_exports__);
     JetConfirmationModal: _Jetstream_ConfirmationModal__WEBPACK_IMPORTED_MODULE_2__.default,
     JetSecondaryButton: _Jetstream_SecondaryButton__WEBPACK_IMPORTED_MODULE_3__.default,
     JetDangerButton: _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_4__.default
+  },
+  mounted: function mounted() {
+    if (this.active_job) {
+      this.interval = this.startPoll();
+    }
+  },
+  unmounted: function unmounted() {
+    this.endPoll();
   },
   data: function data() {
     return {
@@ -19855,18 +19868,27 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     updateData: function updateData() {
+      var _this = this;
+
       this.$inertia.reload({
         preserveState: true,
-        preserveScroll: true
-      }); // read about the possible options under manual visits.
+        preserveScroll: true,
+        onSuccess: function onSuccess(page) {
+          console.log(page);
+
+          if (!page.props.active_job) {
+            _this.endPoll();
+          }
+        }
+      });
     },
-    created: function created() {
-      this.interval = setInterval(function () {
+    startPoll: function startPoll() {
+      return setInterval(function () {
         this.updateData();
-      }.bind(this), 1000); // set 1000 to any number you need
+      }.bind(this), 2500);
     },
-    beforeDestroy: function beforeDestroy() {
-      clearInterval(this.interval); // this is important!
+    endPoll: function endPoll() {
+      clearInterval(this.interval);
     },
     confirmUrlDeletion: function confirmUrlDeletion(url) {
       this.urlBeingDeleted = url;
@@ -19882,7 +19904,7 @@ __webpack_require__.r(__webpack_exports__);
       this.showScanModal = true;
     },
     deleteUrl: function deleteUrl() {
-      var _this = this;
+      var _this2 = this;
 
       this.deleteUrlForm["delete"](route('sites.urls.delete', {
         id: this.website.id,
@@ -19891,12 +19913,12 @@ __webpack_require__.r(__webpack_exports__);
         preserveScroll: true,
         preserveState: true,
         onSuccess: function onSuccess() {
-          return _this.urlBeingDeleted = null;
+          return _this2.urlBeingDeleted = null;
         }
       });
     },
     autoScan: function autoScan() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.deleteUrlForm.post(route('sites.urls.scan', {
         id: this.website.id
@@ -19904,12 +19926,13 @@ __webpack_require__.r(__webpack_exports__);
         preserveScroll: true,
         preserveState: true,
         onSuccess: function onSuccess() {
-          return _this2.showScanModal = false;
+          _this3.showScanModal = null;
+          _this3.interval = _this3.startPoll();
         }
       });
     },
     createUrl: function createUrl() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.addUrlForm.post(route('sites.urls.add', {
         id: this.website.id
@@ -19919,7 +19942,7 @@ __webpack_require__.r(__webpack_exports__);
         preserveState: false,
         resetOnSuccess: true,
         onSuccess: function onSuccess() {
-          _this3.closeAddUrl();
+          _this4.closeAddUrl();
         }
       });
     }
