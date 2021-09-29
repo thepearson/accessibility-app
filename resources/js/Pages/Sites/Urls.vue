@@ -18,9 +18,17 @@
                     <jet-button class="cursor-pointer ml-6 text-sm text-white-500" @click="addUrl()">
                         Manually add a url
                     </jet-button>
+                    <!-- <progress class="mt-6" :total="400" :current="12" /> -->
+                      <div class="flex flex-wrap">
+                        <div>
+                        <span>Worker has processed {{active_crawl.complete}} of {{active_crawl.total}} new urls this scan.</span>
+                        </div>
+                    </div>
                 </div>
-                <template v-if="urls.length > 0">
-                    <template v-for="url in urls" v-bind:key="url.id">
+                <template v-if="urls.total > 0">
+                    <span>Showing {{urls.data.length}} of {{urls.total}} urls</span>
+                    
+                    <template v-for="url in urls.data" v-bind:key="url.id">
                         <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
                             <div class="flex flex-row">
                                 <div class="flex-grow">
@@ -34,6 +42,7 @@
                             </div>
                         </div>
                     </template>
+                    <pagination class="mt-6" :links="urls.links" />
                 </template>
                 <template v-else>
                     <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
@@ -121,16 +130,11 @@
     import JetSecondaryButton from '@/Jetstream/SecondaryButton'
     import JetDangerButton from '@/Jetstream/DangerButton'
     import ModalForm from '@/Components/ModalForm'
+    import Progress from '@/Components/Progress'
+    import Pagination from '@/Components/Pagination'
     import JetInput from '@/Jetstream/Input'
     import JetInputError from '@/Jetstream/InputError'
     import JetLabel from '@/Jetstream/Label'
-    import { Inertia } from '@inertiajs/inertia'
-
-    // Inertia.on('success', (event) => {
-    //     this.interval = setInterval(function () {
-    //         console.log("Craig");
-    //     }.bind(this), 5000);  // set 1000 to any number you need
-    // });
 
     export default {
         props: [
@@ -141,9 +145,11 @@
         components: {
             AppLayout,
             JetButton,
+            Progress,
             JetInput,
             JetInputError,
             JetLabel,
+            Pagination,
             ModalForm,
             JetConfirmationModal,
             JetSecondaryButton,
@@ -191,7 +197,7 @@
             startPoll() {
                 return setInterval(function() {
                     this.updateData(); 
-                }.bind(this), 2500)
+                }.bind(this), 5000)
             },
             endPoll() {
                 clearInterval(this.interval);
@@ -205,7 +211,6 @@
             },
 
             addUrl() {
-                console.log(this.active_crawl);
                 this.addNewUrl = true
             },
 

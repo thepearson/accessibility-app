@@ -55,7 +55,7 @@ function collectAllSameOriginAnchorsDeep(sameOrigin = true) {
  * @param {*} url
  * @param {*} callback
  */
-async function crawl(page, url, options, responseCallback, linkCallback = null) {
+async function crawl(page, url, options, responseCallback, anchorsCallback = null) {
 
   // if url is yet to be crawled, lets crawl it.
   if (crawledUrls.indexOf(url) < 0) {
@@ -64,42 +64,55 @@ async function crawl(page, url, options, responseCallback, linkCallback = null) 
       waitUntil: 'networkidle0'
     });
 
-    // Process the URL
-    responseCallback(url, page);
-
     // Get all the damn links, and add them to the damn list.
     const anchors = await page.evaluate(collectAllSameOriginAnchorsDeep);
-
+    anchorsCallback(anchors, options);
     
     for (let link of anchors) {
       if (urls.indexOf(link) < 0) {
         urls.push(link);
-        
-        linkCallback(link, options.meta);
       }
     }
 
     crawledUrls.push(url);
+
+    // Process the URL
+    responseCallback(url, page, options);
     return true;
   }
   return true;
 }
 
 
-const handleNewLink = async function(url, meta) {
-  console.log(urls.length, crawledUrls.length, url);
-  // axios.post(`${meta.hostname}${meta.data}`, {
-  //   urls: [
-  //     url
-  //   ]
-  // },
-  // {
-  //   headers: {
-  //     'Authorization': `Bearer ${meta.api_token}`
-  //   }
-  // }).then((response) => {
-  //     console.log(response);
-  //   });
+const handleAnchors = async function(anchors, options) {
+
+  const newUrls = anchors.filter(a => urls.indexOf(a) < 0)
+    .map(u => u.replace(options.base_url, ""));
+
+  if (newUrls.length < 1) {
+    return;
+  }
+
+  const payload = {
+    urls: newUrls
+  }
+
+  const axiosOptions = {
+    headers: {
+      'Authorization': `Bearer ${options.meta.token}`
+    }
+  }
+  
+  //console.log(payload, axiosOptions)
+  axios.post(
+    `${options.meta.hostname}${options.meta.data}`, 
+    payload, 
+    axiosOptions)
+  .then(response => {
+    console.log(response);
+  }).catch(e => {
+    console.log(e);
+  });
 }
 
 /**
@@ -108,23 +121,47 @@ const handleNewLink = async function(url, meta) {
  * @param {*} url
  * @param {*} page
  */
-const handleResponse = async function(url, page) {
-  // Do nothing on crawl.
-  return;
+const handleResponse = async function(url, page, options) {
+  const payload = {
+    status: 'processing',
+    total: urls.length,
+    complete: crawledUrls.length,
+  }
+
+  const axiosOptions = {
+    headers: {
+      'Authorization': `Bearer ${options.meta.token}`
+    }
+  }
+
+  axios.post(
+    `${options.meta.hostname}${options.meta.status}`, 
+    payload, 
+    axiosOptions)
+  .then(response => {
+    console.log(response);
+  }).catch(e => {
+    console.log(e);
+  });
 };
+
 
 (async () => {
 
   // test data
   const options = {
-    base_url: 'https://www.education.govt.nz',
+    base_url: 'https://www.education.govt.nz/',
     recursive: true,
     meta: {
       token: "dhNduqxrBYLLQ9evXRaqPYHavy4D4Y405pxpDjNKemqOm0nTFzh0YWFL6yfEjQ0u",
       hostname: "http://localhost",
-      status: "/api/job/update",
+      status: "/api/crawl/update",
       data: "/api/sites/1/urls"
     }
+  }
+
+  if(options.base_url.charAt( options.base_url.length-1 ) == "/") {
+    options.base_url = options.base_url.slice(0, -1)
   }
 
   const browser = await puppeteer.launch({
@@ -145,7 +182,7 @@ const handleResponse = async function(url, page) {
     while (urls.length > crawledUrls.length) {
       // Just keep iterating until it's done, this will skip already crawled urls.
       for (const url of urls) {
-        await crawl(page, url, options, handleResponse, handleNewLink);
+        await crawl(page, url, options, handleResponse, handleAnchors);
       }
     }
   } catch (e) {

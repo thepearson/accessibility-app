@@ -25,7 +25,7 @@ class UrlController extends Controller
     
         return Inertia::render('Sites/Urls', [
             'website' => $website,
-            'urls' => $website->urls,
+            'urls' => $website->urls()->paginate(8),
             'active_crawl' => $crawl,
         ]);
     }
