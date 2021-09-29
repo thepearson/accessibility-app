@@ -31,8 +31,8 @@ Route::middleware('auth:sanctum')->get('/website', function (Request $request) {
     return response()->json(['error' => 'Unauthenticated.'], 401);
 });
 
-// Called by the workers to update the state of a job
-Route::middleware('validJobToken')->post('/crawl/update', [CrawlController::class, 'update'])->name('api.crawl.update');
+// Called by the workers to update the state of a crawl
+Route::middleware('validCrawlToken')->post('/crawl/update', [CrawlController::class, 'update'])->name('api.crawl.update');
 
 // Called by the workers to add a url or urls
-Route::middleware('validJobToken')->post('/sites/{id}/urls', [UrlController::class, 'addUrls'])->name('api.site.urls.add');
+Route::middleware('validCrawlToken')->post('/sites/{id}/urls', [UrlController::class, 'addUrls'])->name('api.site.urls.add');
