@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Url;
-use App\Models\Job;
+use App\Models\Crawl;
 use App\Models\Website;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -20,14 +20,13 @@ class UrlController extends Controller
     public function index(Request $request, $id) {
         $website = Website::find($id);
 
-        $job = Job::where('website_id', $id)
-            ->where('type', 'crawl')
+        $crawl = Crawl::where('website_id', $id)
             ->whereIn('status', ['queued', 'processing'])->first();
     
         return Inertia::render('Sites/Urls', [
             'website' => $website,
             'urls' => $website->urls,
-            'active_job' => $job
+            'active_crawl' => $crawl,
         ]);
     }
 
@@ -67,31 +66,29 @@ class UrlController extends Controller
         Url::where('website_id', $id)->delete();
 
         $website = Website::find($id);
-
-        $type = 'crawl';
-        $job = Job::create($type);
+        $crawl = Crawl::create();
         
         $message = [
             'base_url' => $website->base_url
         ];
 
-        // Update base job
-        $job->data = json_encode($message);
-        $job->website_id = $website->id;
+        // Update base crawl
+        $crawl->data = json_encode($message);
+        $crawl->website_id = $website->id;
 
         $message['meta'] = [
-            'token' => $job->token,
+            'token' => $crawl->token,
             'hostname' => env('CALLBACK_HOST', 'http://localhost'),
-            'status' => '/api/job/update',
+            'status' => '/api/crawl/update',
             'data' => "/api/sites/{$website->id}/urls"
         ];
 
         // Queue the AMPQ reqquest
         $client->connect();
-        $client->message(json_encode($message), $type);
+        $client->message(json_encode($message), 'crawl');
 
-        // Save the job
-        $job->save();
+        // Save the crawl
+        $crawl->save();
 
         return Redirect::route('sites.urls.list', [ 'id' => $website->id ]);
     }

@@ -6,17 +6,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-class JobController extends Controller
+class CrawlController extends Controller
 {
     public function index(Request $request) {
 
     }
 
     /**
-     * Allows a worker to update the current status of a job
+     * Allows a worker to update the current status of a crawl
      * 
-     * This should be passed through the EnsureJobTokenIsValid middleware,
-     * it expects that the Request attribute 'job' is present and valid. 
+     * This should be passed through the EnsureCrawlTokenIsValid middleware,
+     * it expects that the Request attribute 'crawl' is present and valid. 
      */
     public function update(Request $request) {
         
@@ -28,7 +28,19 @@ class JobController extends Controller
             'status' => [
                 'required',
                 Rule::in(['processing', 'success', 'failed'])
-            ]
+            ],
+            'total' => [
+                'numeric',
+                'nullable',
+            ],
+            'complete' => [
+                'numeric',
+                'nullable',
+            ],
+            // 'message' => [
+            //     'string',
+            //     'nullable',
+            // ]
         ];
 
         // Validate the body of the request
@@ -40,11 +52,13 @@ class JobController extends Controller
             ], 400);
         }
 
-        // Update the job
-        $job = $request->get('job');
-        $job->status = $data['status'];
-        $job->save();
+        // Update the crawl
+        $crawl = $request->get('crawl');
+        $crawl->status = $data['status'];
+        $crawl->total = $data['total'];
+        $crawl->complete = $data['complete'];
+        $crawl->save();
 
-        return response()->json($job);
+        return response()->json($crawl);
     }
 }

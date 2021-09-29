@@ -9,10 +9,10 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="p-6 mb-6 flex justify-end">
-                    <jet-button :disabled="active_job" class="cursor-pointer ml-6 text-sm text-white-500" @click="scanSiteUrls()">
+                    <jet-button :disabled="active_crawl" class="cursor-pointer ml-6 text-sm text-white-500" @click="scanSiteUrls()">
                         Automaticly discover
 
-                        <div class="loader" v-show="active_job">working...</div>
+                        <div class="loader" v-show="active_crawl">working...</div>
                     </jet-button>
 
                     <jet-button class="cursor-pointer ml-6 text-sm text-white-500" @click="addUrl()">
@@ -136,7 +136,7 @@
         props: [
             'website',
             'urls',
-            'active_job',
+            'active_crawl',
         ],
         components: {
             AppLayout,
@@ -150,7 +150,7 @@
             JetDangerButton,
         },
         mounted() {
-            if (this.active_job) {
+            if (this.active_crawl) {
                 this.interval = this.startPoll();  
             }
         },
@@ -182,7 +182,7 @@
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: page => {
-                        if (!page.props.active_job) {
+                        if (!page.props.active_crawl) {
                             this.endPoll();
                         }
                     }
@@ -205,7 +205,7 @@
             },
 
             addUrl() {
-                console.log(this.active_job);
+                console.log(this.active_crawl);
                 this.addNewUrl = true
             },
 

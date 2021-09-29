@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Website;
-use App\Http\Controllers\JobController;
+use App\Http\Controllers\CrawlController;
 use App\Http\Controllers\UrlController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -32,7 +32,7 @@ Route::middleware('auth:sanctum')->get('/website', function (Request $request) {
 });
 
 // Called by the workers to update the state of a job
-Route::middleware('validJobToken')->post('/job/update', [JobController::class, 'update'])->name('api.job.update');
+Route::middleware('validJobToken')->post('/crawl/update', [CrawlController::class, 'update'])->name('api.crawl.update');
 
 // Called by the workers to add a url or urls
 Route::middleware('validJobToken')->post('/sites/{id}/urls', [UrlController::class, 'addUrls'])->name('api.site.urls.add');

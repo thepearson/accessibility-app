@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Exceptions\InvalidPropertiesException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Exceptions\InvalidPropertiesException;
 
-class Job extends Model
-{
+class Crawl extends Model
+{    
     use HasFactory;
 
     /**
@@ -20,17 +20,15 @@ class Job extends Model
         return Str::random(env('WORKER_TOKEN_LENGTH', 64));
     }
 
-    public static function create($type) 
+    public static function create() 
     {
-        if (!in_array($type, ['scan', 'crawl'])) 
-            throw new InvalidPropertiesException('Invalid type');
-
-        $job = new self;
-        $job->token = self::createToken();
-        $job->status = 'queued';
-        $job->type = $type;
-
-        return $job;
+        $crawl = new self;
+        $crawl->token = self::createToken();
+        $crawl->status = 'queued';
+        $crawl->total = null;
+        $crawl->complete = null;
+        $crawl->messages = "{}";
+        return $crawl;
 
     }
 }

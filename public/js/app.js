@@ -19830,7 +19830,7 @@ __webpack_require__.r(__webpack_exports__);
 // });
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['website', 'urls', 'active_job'],
+  props: ['website', 'urls', 'active_crawl'],
   components: {
     AppLayout: _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_0__.default,
     JetButton: _Jetstream_Button__WEBPACK_IMPORTED_MODULE_1__.default,
@@ -19843,7 +19843,7 @@ __webpack_require__.r(__webpack_exports__);
     JetDangerButton: _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_4__.default
   },
   mounted: function mounted() {
-    if (this.active_job) {
+    if (this.active_crawl) {
       this.interval = this.startPoll();
     }
   },
@@ -19874,7 +19874,7 @@ __webpack_require__.r(__webpack_exports__);
         preserveState: true,
         preserveScroll: true,
         onSuccess: function onSuccess(page) {
-          if (!page.props.active_job) {
+          if (!page.props.active_crawl) {
             _this.endPoll();
           }
         }
@@ -19895,7 +19895,7 @@ __webpack_require__.r(__webpack_exports__);
       this.addNewUrl = false;
     },
     addUrl: function addUrl() {
-      console.log(this.active_job);
+      console.log(this.active_crawl);
       this.addNewUrl = true;
     },
     scanSiteUrls: function scanSiteUrls() {
@@ -25206,7 +25206,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }),
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_button, {
-        disabled: $props.active_job,
+        disabled: $props.active_crawl,
         "class": "cursor-pointer ml-6 text-sm text-white-500",
         onClick: _cache[1] || (_cache[1] = function ($event) {
           return $options.scanSiteUrls();
@@ -25215,7 +25215,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
           return [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_6, "working...", 512
           /* NEED_PATCH */
-          ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, $props.active_job]])];
+          ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, $props.active_crawl]])];
         }),
         _: 1
         /* STABLE */
