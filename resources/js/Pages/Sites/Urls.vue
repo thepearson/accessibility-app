@@ -182,7 +182,6 @@
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: page => {
-                        console.log(page);
                         if (!page.props.active_job) {
                             this.endPoll();
                         }

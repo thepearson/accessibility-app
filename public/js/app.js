@@ -19874,8 +19874,6 @@ __webpack_require__.r(__webpack_exports__);
         preserveState: true,
         preserveScroll: true,
         onSuccess: function onSuccess(page) {
-          console.log(page);
-
           if (!page.props.active_job) {
             _this.endPoll();
           }

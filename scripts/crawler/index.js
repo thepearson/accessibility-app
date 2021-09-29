@@ -8,20 +8,7 @@ const data = [];
 const crawledUrls = [];
 const urls = [];
 
-const api_token = 'Bearer aBBAsR7fzCih9lni1iata232u4HRy3w7bIhoScQY';
-
 const axios = require('axios');
-
-// axios.get('http://localhost/api/website', {
-//   headers: {
-//     'Authorization': api_token
-//   }
-// }).then((response) => {
-//   console.log(response);
-// });
-
-
-
 
 
 /**
@@ -77,30 +64,42 @@ async function crawl(page, url, options, responseCallback, linkCallback = null) 
       waitUntil: 'networkidle0'
     });
 
-    // Get all the damn links, and add them to the damn list.
-    const anchors = await page.evaluate(collectAllSameOriginAnchorsDeep);
-    for (let link of anchors) {
-      if (urls.indexOf(link) < 0) {
-        if (options.recursive) {
-          urls.push(url);
-        }
-        linkCallback(link, options.callback);
-      }
-    }
-
     // Process the URL
     responseCallback(url, page);
 
-    crawledUrls.push(url);
+    // Get all the damn links, and add them to the damn list.
+    const anchors = await page.evaluate(collectAllSameOriginAnchorsDeep);
 
+    
+    for (let link of anchors) {
+      if (urls.indexOf(link) < 0) {
+        urls.push(link);
+        
+        linkCallback(link, options.meta);
+      }
+    }
+
+    crawledUrls.push(url);
     return true;
   }
   return true;
 }
 
 
-const handleNewLink = async function(url) {
-  console.log(url);
+const handleNewLink = async function(url, meta) {
+  console.log(urls.length, crawledUrls.length, url);
+  // axios.post(`${meta.hostname}${meta.data}`, {
+  //   urls: [
+  //     url
+  //   ]
+  // },
+  // {
+  //   headers: {
+  //     'Authorization': `Bearer ${meta.api_token}`
+  //   }
+  // }).then((response) => {
+  //     console.log(response);
+  //   });
 }
 
 /**
@@ -110,19 +109,21 @@ const handleNewLink = async function(url) {
  * @param {*} page
  */
 const handleResponse = async function(url, page) {
-  //const results = await new AxePuppeteer(page).analyze();
-  //console.log(JSON.stringify(results.violations, undefined, 2));
-  //console.log(url);
+  // Do nothing on crawl.
+  return;
 };
 
-
 (async () => {
+
+  // test data
   const options = {
     base_url: 'https://www.education.govt.nz',
     recursive: true,
-    callback: {
-      url: 'https://',
-      auth: 'Bearer 1234abcd'
+    meta: {
+      token: "dhNduqxrBYLLQ9evXRaqPYHavy4D4Y405pxpDjNKemqOm0nTFzh0YWFL6yfEjQ0u",
+      hostname: "http://localhost",
+      status: "/api/job/update",
+      data: "/api/sites/1/urls"
     }
   }
 
