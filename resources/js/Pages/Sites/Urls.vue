@@ -18,12 +18,6 @@
                     <jet-button class="cursor-pointer ml-6 text-sm text-white-500" @click="addUrl()">
                         Manually add a url
                     </jet-button>
-                    <!-- <progress class="mt-6" :total="400" :current="12" /> -->
-                      <div class="flex flex-wrap">
-                        <div>
-                        <span>Worker has processed {{active_crawl.complete}} of {{active_crawl.total}} new urls this scan.</span>
-                        </div>
-                    </div>
                 </div>
                 <template v-if="urls.total > 0">
                     <span>Showing {{urls.data.length}} of {{urls.total}} urls</span>

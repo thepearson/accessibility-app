@@ -35,7 +35,7 @@ class Client
     public function message($payload, $queue)
     {
         $this->channel->queue_declare($queue, false, true, false, false);
-        $message = new AMQPMessage(json_encode($payload));
+        $message = new AMQPMessage($payload);
         $this->channel->basic_publish($message, '', $queue);
     }
 

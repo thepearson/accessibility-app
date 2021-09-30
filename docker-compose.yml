@@ -82,11 +82,21 @@ services:
         networks:
             - sail
     selenium:
-       image: 'selenium/standalone-chrome'
-       volumes:
+        image: 'selenium/standalone-chrome'
+        volumes:
             - '/dev/shm:/dev/shm'
-       networks:
-           - sail
+        networks:
+            - sail
+    # worker-accessibility:
+    #     container_name: accessibility-crawler
+    #     image: thepearson/accessibility-crawler:latest
+    #     command: "/usr/sbin/wait-for-it.sh rabbitmq:5672 -- node ./index.js"
+    #     networks:
+    #         - sail
+    #     links:
+    #         - rabbitmq
+    #         - laravel.test
+
 networks:
     sail:
         driver: bridge
