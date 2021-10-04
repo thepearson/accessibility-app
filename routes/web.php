@@ -51,6 +51,10 @@ Route::middleware(['auth:sanctum', 'verified'])
     ->name('sites.add');
 
 Route::middleware(['auth:sanctum', 'verified'])
+    ->post('/sites/{id}/scan', [WebsiteController::class, 'scan'])
+    ->name('sites.scan');
+
+Route::middleware(['auth:sanctum', 'verified'])
     ->delete('/sites/delete/{id}', [WebsiteController::class, 'delete'])
     ->name('sites.delete');
 
@@ -63,8 +67,8 @@ Route::middleware(['auth:sanctum', 'verified'])
     ->name('sites.urls.add');
 
 Route::middleware(['auth:sanctum', 'verified'])
-    ->post('/sites/{id}/urls/scan', [UrlController::class, 'scan'])
-    ->name('sites.urls.scan');
+    ->post('/sites/{id}/urls/scan', [UrlController::class, 'crawl'])
+    ->name('sites.urls.crawl');
 
 Route::middleware(['auth:sanctum', 'verified'])
     ->delete('/sites/{id}/urls/{url_id}/delete', [UrlController::class, 'delete'])

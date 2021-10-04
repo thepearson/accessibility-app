@@ -5,16 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Url extends Model
+class Scan extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'url', 'website_id'
-    ];
-
     /**
-     * Website relationship
+     * Team relationship
      */
     public function website()
     {

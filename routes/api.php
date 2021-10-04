@@ -3,6 +3,7 @@
 use App\Models\Website;
 use App\Http\Controllers\CrawlController;
 use App\Http\Controllers\UrlController;
+use App\Http\Controllers\UrlScanController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,3 +37,6 @@ Route::middleware('validCrawlToken')->post('/crawl/update', [CrawlController::cl
 
 // Called by the workers to add a url or urls
 Route::middleware('validCrawlToken')->post('/sites/{id}/urls', [UrlController::class, 'addUrls'])->name('api.site.urls.add');
+
+// Called by the workers to update the state of a scan
+Route::middleware('validScanToken')->post('/url_scan/update', [UrlScanController::class, 'update'])->name('api.scan.update');

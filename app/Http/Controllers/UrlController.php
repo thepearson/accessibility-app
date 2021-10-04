@@ -61,7 +61,7 @@ class UrlController extends Controller
     /**
      * 
      */
-    public function scan(Request $request, Client $client, $id) {
+    public function crawl(Request $request, Client $client, $id) {
 
         Url::where('website_id', $id)->delete();
 

@@ -32,10 +32,19 @@ class Website extends Model
 
     
     /**
-     * Team relationship
+     * Url relationship
      */
     public function urls()
     {
         return $this->hasMany(Url::class);
+    }
+    
+
+    /**
+     * Scan relationship
+     */
+    public function scans()
+    {
+        return $this->hasMany(Scan::class);
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCrawlsTable extends Migration
+class CreateUrlScansTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,20 +13,22 @@ class CreateCrawlsTable extends Migration
      */
     public function up()
     {
-        Schema::create('crawls', function (Blueprint $table) {
+        Schema::create('url_scans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('website_id');
-            $table->string('token');
-            $table->json('data');
-            $table->json('messages')->nullable();
-            $table->integer('total')->nullable(true)->default(null);
-            $table->integer('complete')->nullable(true)->default(null);
+            $table->foreignId('scan_id');
+            $table->foreignId('url_id');   
             $table->enum('status', ['queued', 'processing', 'success', 'failed']);
+            $table->string('token');
 
+            $table->json('data');
+            $table->json('messages');
             $table->timestamps();
-            $table->foreign('website_id')
+            $table->foreign('scan_id')
                 ->references('id')
-                ->on('websites');
+                ->on('scans');
+            $table->foreign('url_id')
+                ->references('id')
+                ->on('urls');
         });
     }
 
@@ -37,6 +39,6 @@ class CreateCrawlsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('crawls');
+        Schema::dropIfExists('url_scans');
     }
 }

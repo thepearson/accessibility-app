@@ -23,9 +23,9 @@
                                 <inertia-link class="cursor-pointer ml-6 text-sm" :href="route('sites.urls.list', { id: website.id })">
                                     Urls
                                 </inertia-link>
-                                <!-- <inertia-link class="cursor-pointer ml-6 text-sm" :href="route('sites.settings')">
-                                    Settings
-                                </inertia-link> -->
+                                <button class="cursor-pointer ml-6 text-sm text-green-500" @click="confirmSiteScan(website)">
+                                    Scan
+                                </button>
                                 <button class="cursor-pointer ml-6 text-sm text-red-500" @click="confirmSiteDeletion(website)">
                                     Delete
                                 </button>
@@ -58,6 +58,27 @@
 
             <jet-danger-button class="ml-2" @click="deleteSite" :class="{ 'opacity-25': deleteSiteForm.processing }" :disabled="deleteSiteForm.processing">
                 Delete
+            </jet-danger-button>
+        </template>
+    </jet-confirmation-modal>
+
+    <!-- Delete Website Confirmation Modal -->
+    <jet-confirmation-modal :show="siteBeingScanned" @close="siteBeingScanned = null">
+        <template #title>
+            Scan website?
+        </template>
+
+        <template #content>
+            Are you sure you would like to scan this website?
+        </template>
+
+        <template #footer>
+            <jet-secondary-button @click="siteBeingScanned = null">
+                Cancel
+            </jet-secondary-button>
+
+            <jet-danger-button class="ml-2" @click="scanSite" :class="{ 'opacity-25': scanSiteForm.processing }" :disabled="scanSiteForm.processing">
+                Scan
             </jet-danger-button>
         </template>
     </jet-confirmation-modal>
@@ -114,7 +135,9 @@
         props: [
             'websites',
         ],
+
         emits: ['submitted'],
+
         components: {
             AppLayout,
             JetConfirmationModal,
@@ -127,10 +150,13 @@
             JetCheckbox,
             ModalForm,
         },
+
         data() {
             return {
                 deleteSiteForm: this.$inertia.form(),
+                scanSiteForm: this.$inertia.form(),
                 siteBeingDeleted: null,
+                siteBeingScanned: null,
                 addNewSite: null,
                 addSiteForm: this.$inertia.form({
                     name: '',
@@ -141,9 +167,14 @@
                 })
             }
         },
+
         methods: {
             confirmSiteDeletion(site) {
                 this.siteBeingDeleted = site
+            },
+
+            confirmSiteScan(site) {
+                this.siteBeingScanned = site
             },
 
             closeAddSite() {
@@ -163,6 +194,17 @@
                     onSuccess: () => (this.siteBeingDeleted = null),
                 })
             },
+
+            scanSite() {
+                this.scanSiteForm.post(route('sites.scan', {
+                        id: this.siteBeingScanned.id
+                }), {
+                    preserveScroll: true,
+                    preserveState: true,
+                    onSuccess: () => (this.siteBeingScanned = null),
+                })
+            },
+
             createWebsite() {
                 this.addSiteForm.post(route('sites.add'), {
                     errorBag: 'createWebsite',

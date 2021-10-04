@@ -5,8 +5,6 @@ const post = async function(url, data, token) {
         headers: {
             'Authorization': `Bearer ${token}`
         }
-    }).catch((e) => {
-        console.log(e);
     });
 }
 

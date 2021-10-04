@@ -19786,7 +19786,9 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       deleteSiteForm: this.$inertia.form(),
+      scanSiteForm: this.$inertia.form(),
       siteBeingDeleted: null,
+      siteBeingScanned: null,
       addNewSite: null,
       addSiteForm: this.$inertia.form({
         name: '',
@@ -19800,6 +19802,9 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     confirmSiteDeletion: function confirmSiteDeletion(site) {
       this.siteBeingDeleted = site;
+    },
+    confirmSiteScan: function confirmSiteScan(site) {
+      this.siteBeingScanned = site;
     },
     closeAddSite: function closeAddSite() {
       this.addNewSite = false;
@@ -19820,14 +19825,27 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    createWebsite: function createWebsite() {
+    scanSite: function scanSite() {
       var _this2 = this;
+
+      this.scanSiteForm.post(route('sites.scan', {
+        id: this.siteBeingScanned.id
+      }), {
+        preserveScroll: true,
+        preserveState: true,
+        onSuccess: function onSuccess() {
+          return _this2.siteBeingScanned = null;
+        }
+      });
+    },
+    createWebsite: function createWebsite() {
+      var _this3 = this;
 
       this.addSiteForm.post(route('sites.add'), {
         errorBag: 'createWebsite',
         preserveScroll: true,
         onSuccess: function onSuccess() {
-          _this2.addNewSite = false;
+          _this3.addNewSite = false;
         }
       });
     }
@@ -19959,7 +19977,7 @@ __webpack_require__.r(__webpack_exports__);
     autoScan: function autoScan() {
       var _this3 = this;
 
-      this.deleteUrlForm.post(route('sites.urls.scan', {
+      this.deleteUrlForm.post(route('sites.urls.crawl', {
         id: this.website.id
       }), {
         preserveScroll: true,
@@ -24951,30 +24969,38 @@ var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNo
 
 var _hoisted_16 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Delete ");
 
-var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Add a new Website ");
+var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Scan website? ");
 
-var _hoisted_18 = {
+var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Are you sure you would like to scan this website? ");
+
+var _hoisted_19 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Cancel ");
+
+var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Scan ");
+
+var _hoisted_21 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Add a new Website ");
+
+var _hoisted_22 = {
   "class": "col-span-6 sm:col-span-4"
 };
-var _hoisted_19 = {
+var _hoisted_23 = {
   "class": "col-span-6 sm:col-span-4"
 };
-var _hoisted_20 = {
+var _hoisted_24 = {
   "class": "col-span-6 sm:col-span-4"
 };
-var _hoisted_21 = {
+var _hoisted_25 = {
   "class": "flex items-center"
 };
 
-var _hoisted_22 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
+var _hoisted_26 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
   "class": "ml-2 text-sm text-gray-600"
 }, "Automatically scan for urls?", -1
 /* HOISTED */
 );
 
-var _hoisted_23 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Cancel ");
+var _hoisted_27 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Cancel ");
 
-var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Add ");
+var _hoisted_28 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Add ");
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_jet_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("jet-button");
@@ -25051,7 +25077,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
         }, 1032
         /* PROPS, DYNAMIC_SLOTS */
-        , ["href"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <inertia-link class=\"cursor-pointer ml-6 text-sm\" :href=\"route('sites.settings')\">\n                                    Settings\n                                </inertia-link> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
+        , ["href"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
+          "class": "cursor-pointer ml-6 text-sm text-green-500",
+          onClick: function onClick($event) {
+            return $options.confirmSiteScan(website);
+          }
+        }, " Scan ", 8
+        /* PROPS */
+        , ["onClick"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
           "class": "cursor-pointer ml-6 text-sm text-red-500",
           onClick: function onClick($event) {
             return $options.confirmSiteDeletion(website);
@@ -25112,17 +25145,63 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["show"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Delete Token Confirmation Modal "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_modal_form, {
-    show: $data.addNewSite,
-    onClose: _cache[7] || (_cache[7] = function ($event) {
-      return $data.addNewSite = null;
+  , ["show"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Delete Website Confirmation Modal "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_confirmation_modal, {
+    show: $data.siteBeingScanned,
+    onClose: _cache[5] || (_cache[5] = function ($event) {
+      return $data.siteBeingScanned = null;
     })
   }, {
     title: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [_hoisted_17];
     }),
     content: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_label, {
+      return [_hoisted_18];
+    }),
+    footer: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_secondary_button, {
+        onClick: _cache[4] || (_cache[4] = function ($event) {
+          return $data.siteBeingScanned = null;
+        })
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [_hoisted_19];
+        }),
+        _: 1
+        /* STABLE */
+
+      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_danger_button, {
+        "class": ["ml-2", {
+          'opacity-25': $data.scanSiteForm.processing
+        }],
+        onClick: $options.scanSite,
+        disabled: $data.scanSiteForm.processing
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [_hoisted_20];
+        }),
+        _: 1
+        /* STABLE */
+
+      }, 8
+      /* PROPS */
+      , ["onClick", "class", "disabled"])];
+    }),
+    _: 1
+    /* STABLE */
+
+  }, 8
+  /* PROPS */
+  , ["show"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Delete Token Confirmation Modal "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_modal_form, {
+    show: $data.addNewSite,
+    onClose: _cache[9] || (_cache[9] = function ($event) {
+      return $data.addNewSite = null;
+    })
+  }, {
+    title: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [_hoisted_21];
+    }),
+    content: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_label, {
         "for": "name",
         value: "Site name"
       }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_input, {
@@ -25130,7 +25209,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         type: "text",
         "class": "mt-1 block w-full",
         modelValue: $data.addSiteForm.name,
-        "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
+        "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
           return $data.addSiteForm.name = $event;
         }),
         autofocus: ""
@@ -25141,7 +25220,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         "class": "mt-2"
       }, null, 8
       /* PROPS */
-      , ["message"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_19, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_label, {
+      , ["message"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_label, {
         "for": "base_url",
         value: "Site base URL"
       }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_input, {
@@ -25149,7 +25228,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         type: "text",
         "class": "mt-1 block w-full",
         modelValue: $data.addSiteForm.base_url,
-        "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
+        "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
           return $data.addSiteForm.base_url = $event;
         }),
         autofocus: ""
@@ -25160,22 +25239,22 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         "class": "mt-2"
       }, null, 8
       /* PROPS */
-      , ["message"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_20, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_checkbox, {
+      , ["message"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_24, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", _hoisted_25, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_checkbox, {
         name: "autoscan",
         checked: $data.addSiteForm.autoscan,
-        "onUpdate:checked": _cache[6] || (_cache[6] = function ($event) {
+        "onUpdate:checked": _cache[8] || (_cache[8] = function ($event) {
           return $data.addSiteForm.autoscan = $event;
         })
       }, null, 8
       /* PROPS */
-      , ["checked"]), _hoisted_22])])];
+      , ["checked"]), _hoisted_26])])];
     }),
     footer: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_secondary_button, {
         onClick: $options.closeAddSite
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_23];
+          return [_hoisted_27];
         }),
         _: 1
         /* STABLE */
@@ -25190,7 +25269,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         disabled: $data.addSiteForm.processing
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_24];
+          return [_hoisted_28];
         }),
         _: 1
         /* STABLE */
