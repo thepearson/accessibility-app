@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class UrlScanResult extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'url_scan_id', 'rule_id', 'result', 'impact', 'html', 'message'
+    ];
 }

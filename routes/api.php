@@ -40,3 +40,6 @@ Route::middleware('validCrawlToken')->post('/sites/{id}/urls', [UrlController::c
 
 // Called by the workers to update the state of a scan
 Route::middleware('validScanToken')->post('/url_scan/update', [UrlScanController::class, 'update'])->name('api.scan.update');
+
+// Called by the workers to complete a scan
+Route::middleware('validScanToken')->post('/url_scan/results', [UrlScanController::class, 'results'])->name('api.scan.results');

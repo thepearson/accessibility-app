@@ -40,6 +40,7 @@ const handleResults = async function(results, options) {
         result: "violations",
         impact: node.impact,
         html: node.html,
+        //target: node.target,
         message: node.failureSummary
       }
 
