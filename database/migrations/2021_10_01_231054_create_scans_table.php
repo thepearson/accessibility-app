@@ -15,11 +15,9 @@ class CreateScansTable extends Migration
     {
         Schema::create('scans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('website_id');
+            $table->enum('type', ['manual', 'automated'])->default('manual');
+            $table->foreignId('website_id')->constrained('websites')->cascadeOnDelete();
             $table->timestamps();
-            $table->foreign('website_id')
-                ->references('id')
-                ->on('websites');
         });
     }
 

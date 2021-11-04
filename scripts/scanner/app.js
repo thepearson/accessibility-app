@@ -31,26 +31,35 @@ const scan = async function(page, url, options, resultsCallback) {
  * @param {*} page
  */
 const handleResults = async function(results, options) {
+  var data = [];
   for (const violation of results.violations) {
-    //console.log(violation);
     const violation_id = violation.id;
     for (const node of violation.nodes) {
-      const result = {
+      data.push({
         rule_id: violation_id,
         result: "violations",
         impact: node.impact,
         html: node.html,
         //target: node.target,
         message: node.failureSummary
-      }
-
-      console.log(result);
+      });
     }
   }
+
+  await api.post(
+    `${options.meta.hostname}${options.meta.results}`,
+    {
+      results: data
+    },
+    options.meta.token
+  );
+
+
+  // TODO: Add the other results/.
 };
 
 
-const startScan = async function(options) {
+const accessibleScan = async function(options) {
   const startTime = Date.now();
 
   const browser = await puppeteer.launch({
@@ -81,5 +90,5 @@ const startScan = async function(options) {
 
 
 module.exports = {
-  startScan
+  accessibleScan
 }

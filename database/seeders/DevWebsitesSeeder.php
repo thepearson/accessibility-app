@@ -15,11 +15,12 @@ class DevWebsitesSeeder extends Seeder
      */
     public function run()
     {
+
         $user = User::where('email', 'thepearson@gmail.com')->firstOrFail();
 
         $website = new Website;
         $website->name = "Ministry of Education";
         $website->base_url = "https://education.govt.nz/";
-        $user->personalTeam()->websites()->save($website);
+        $user->personalTeam()->websites()->save($website);        
     }
 }

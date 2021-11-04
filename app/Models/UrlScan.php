@@ -11,7 +11,7 @@ class UrlScan extends Model
     use HasFactory;
     
     protected $fillable = [
-        'url_id', 'website_id', 'token', 'status', 'message'
+         'website_id', 'token', 'status', 'message'
     ];
 
     
@@ -52,11 +52,20 @@ class UrlScan extends Model
 
 
     /**
-     * Url00 bum willy face
+     * Url
      *  relationship
      */
     public function url()
     {
         return $this->belongsTo(Url::class);
+    }
+
+    
+    /**
+     * UrlScanAccessibilityResults relationship
+     */
+    public function urlScanAccessibilityResults()
+    {
+        return $this->hasMany(UrlScanAccessibilityResult::class);
     }
 }

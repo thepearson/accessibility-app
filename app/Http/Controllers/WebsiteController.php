@@ -51,13 +51,14 @@ class WebsiteController extends Controller
         foreach ($website->urls as $url) {
             $urlScan = UrlScan::create($scan, $url);
             
-            
+            $canonicalUrl = rtrim($website->base_url, '/') . $url->url;
             $message = [
-                'url' => "{$website->base_url}{$url->url}",
+                'url' => $canonicalUrl,
                 'meta' => [
                     'token' => $urlScan->token,
                     'hostname' => env('CALLBACK_HOST', 'http://localhost'),
-                    'update' => '/api/url_scan/update'
+                    'update' => '/api/url_scan/update',
+                    'results' => '/api/url_scan/results',
                 ],
             ];
 
@@ -73,8 +74,13 @@ class WebsiteController extends Controller
 
     public function show(Request $request, $id) 
     {
-        return Inertia::render('Sites/List', [
-            'website' => Website::find($id)->get(),
+        $website = Website::find($id);
+        $latestScan = $website->latestScan;
+
+        return Inertia::render('Sites/Show', [
+            'website' => $website,
+            'latestScan' => $latestScan,
+            'violations' => $latestScan->urlScanAccessibilityResults->count()
         ]);
     }
 }

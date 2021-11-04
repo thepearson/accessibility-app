@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Rule as RuleModel;
-use App\Models\UrlScanResult;
+use App\Models\UrlScanAccessibilityResult;
+use App\Models\UrlScanRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -62,18 +63,20 @@ class UrlScanController extends Controller
 
         $results = [];
 
-        foreach ($data['results'] as $result) {
+        foreach ($data['accessibility'] as $result) {
             $rule = RuleModel::where('axe_id', $result['rule_id'])->first();
             if ($rule) {
-                $urlScanResult = new UrlScanResult;
-                $urlScanResult->url_scan_id = $urlScan->id;
-                $urlScanResult->rule_id = $rule->id;
-                $urlScanResult->result = $result['result'];
-                $urlScanResult->impact = $result['impact'];
-                $urlScanResult->html = $result['html'];
-                $urlScanResult->message = $result['message'];
-                $urlScanResult->save();
-                $results[] = $urlScanResult;
+                $urlScanAccResult = new UrlScanAccessibilityResult;
+                $urlScanAccResult->url_scan_id = $urlScan->id;
+                $urlScanAccResult->rule_id = $rule->id;
+                $urlScanAccResult->scan_id = $urlScan->scan_id;
+                $urlScanAccResult->url_id = $urlScan->url_id;
+                $urlScanAccResult->result = $result['result'];
+                $urlScanAccResult->impact = $result['impact'];
+                $urlScanAccResult->html = $result['html'];
+                $urlScanAccResult->message = $result['message'];
+                $urlScanAccResult->save();
+                $results[] = $urlScanAccResult;
             } else {
                 // TODO: Dont bomb here For all results
                 return response()->json([
@@ -82,6 +85,37 @@ class UrlScanController extends Controller
                 ], 400);
             }
         }
+
+        foreach ($data['metrics']['responses'] as $response) {
+            $urlScanResponse = new UrlScanRequest;
+            $urlScanResponse->url_scan_id = $urlScan->id;
+            $urlScanResponse->scan_id = $urlScan->scan_id;
+            $urlScanResponse->url_id = $urlScan->url_id;
+            $urlScanResponse->status = $response['status'];
+            $urlScanResponse->size = $response['size'];
+            $urlScanResponse->mime = $response['mime'];
+            $urlScanResponse->uri = $response['uri'];
+            $urlScanResponse->save();
+        }
+
+        // TODO: Save the request metrics here if needed??!?!!
+        // $data['metrics']['stats'] = {
+        // "metrics": {
+        //     "Timestamp": 31262.91123,
+        //     "Documents": 11,
+        //     "Frames": 5,
+        //     "JSEventListeners": 27,
+        //     "Nodes": 3067,
+        //     "LayoutCount": 6,
+        //     "RecalcStyleCount": 5,
+        //     "LayoutDuration": 0.284671,
+        //     "RecalcStyleDuration": 0.069218,
+        //     "ScriptDuration": 0.237569,
+        //     "TaskDuration": 1.846727,
+        //     "JSHeapUsedSize": 13796744,
+        //     "JSHeapTotalSize": 20647936
+        //   },
+        // }
         
         // Set some validation rules for the submitted data
         return response()->json($results);

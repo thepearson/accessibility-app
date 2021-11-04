@@ -87,7 +87,7 @@ const crawl = async function(page, url, options, responseCallback, anchorsCallba
  * @param {*} options 
  * @returns 
  */
-const handleAnchors = async function(anchors, options) {
+const handleNewAnchors = async function(anchors, options) {
   const newUrls = anchors.filter(a => urls.indexOf(a) < 0)
     .map(u => u.replace(options.base_url, ""));
 
@@ -107,7 +107,7 @@ const handleAnchors = async function(anchors, options) {
  * @param {*} url
  * @param {*} page
  */
-const handleResponse = async function(url, page, options) {
+const handlePageCrawl = async function(url, page, options) {
   const payload = {
     status: 'processing',
     total: urls.length,
@@ -147,7 +147,7 @@ const startCrawl = async function(options) {
     while (urls.length > crawledUrls.length) {
       // Just keep iterating until it's done, this will skip already crawled urls.
       for (const url of urls) {
-        await crawl(page, url, options, handleResponse, handleAnchors);
+        await crawl(page, url, options, handlePageCrawl, handleNewAnchors);
       }
     }
   } catch (e) {

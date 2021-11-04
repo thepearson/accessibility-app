@@ -24,4 +24,12 @@ class Scan extends Model
     {
         return $this->hasMany(UrlScan::class);
     }
+
+    /**
+     * UrlScan relationship
+     */
+    public function urlScanAccessibilityResults()
+    {
+        return $this->hasMany(UrlScanAccessibilityResult::class);
+    }
 }

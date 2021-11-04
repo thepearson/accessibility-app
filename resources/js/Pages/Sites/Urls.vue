@@ -26,7 +26,7 @@
                         <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
                             <div class="flex flex-row">
                                 <div class="flex-grow">
-                                    <inertia-link :href="route('sites.show', {id: url.id})"><h2 class="text-2xl font-bold mb-2 text-gray-800">{{url.id}} - {{url.url}}</h2></inertia-link>
+                                    <inertia-link :href="route('sites.show', {id: url.id})"><h2 class="text-sm font-bold mb-2 text-gray-800">{{url.url}}</h2></inertia-link>
                                 </div>
                                 <div class="flex flex-col items-end">
                                     <button class="cursor-pointer ml-6 text-sm text-red-500" @click="confirmUrlDeletion(url)">

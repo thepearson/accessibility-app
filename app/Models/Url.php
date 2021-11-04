@@ -28,4 +28,20 @@ class Url extends Model
     {
         return $this->hasMany(UrlScan::class);
     }
+
+    /**
+     * LatestUrlScan relationship
+     */
+    public function latestUrlScan()
+    {
+        return $this->hasOne(UrlScan::class)->latestOfMany();
+    }
+
+    /**
+     * UrlScanAccessibilityResult relationship
+     */
+    public function urlScanAccessibilityResults()
+    {
+        return $this->hasMany(UrlScanAccessibilityResult::class);
+    }
 }

@@ -15,33 +15,31 @@ const api = require('./api.js');
 
         const packet = JSON.parse(msg.content);
 
-        console.log(packet);
-
+        // Update
         await api.post(
-          `${packet.meta.hostname}${packet.meta.status}`,
-          {
-            status: 'processing',
-            total: 0,
-            complete: 0,
-          },
-          packet.meta.token
+            `${packet.meta.hostname}${packet.meta.status}`,
+            {
+                status: 'processing',
+                total: 0,
+                complete: 0,
+            },
+            packet.meta.token
         );
 
         const results = await app.startCrawl(packet);
       
+        // Update
         await api.post(
-          `${packet.meta.hostname}${packet.meta.status}`,
-          {
-            status: 'success',
-            total: results.total,
-            complete: results.complete,
-          },
-          packet.meta.token
+            `${packet.meta.hostname}${packet.meta.status}`,
+            {
+                status: 'success',
+                total: results.total,
+                complete: results.complete,
+            },
+            packet.meta.token
         );
 
         ch.ack(msg);
-
-        console.log(results);
 
       }, {noAck: false});
     });

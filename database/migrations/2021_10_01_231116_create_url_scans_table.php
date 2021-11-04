@@ -15,20 +15,13 @@ class CreateUrlScansTable extends Migration
     {
         Schema::create('url_scans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('scan_id');
-            $table->foreignId('url_id');   
+            $table->foreignId('scan_id')->constrained('scans')->cascadeOnDelete();
+            $table->foreignId('url_id')->constrained('urls')->cascadeOnDelete();   
             $table->enum('status', ['queued', 'processing', 'success', 'failed']);
             $table->string('token');
-
             $table->json('data');
             $table->json('messages');
             $table->timestamps();
-            $table->foreign('scan_id')
-                ->references('id')
-                ->on('scans');
-            $table->foreign('url_id')
-                ->references('id')
-                ->on('urls');
         });
     }
 

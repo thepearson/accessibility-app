@@ -47,4 +47,18 @@ class Website extends Model
     {
         return $this->hasMany(Scan::class);
     }
+
+    
+    /**
+     * Get the user's most recent order.
+     */
+    public function latestScan()
+    {
+        return $this->hasOne(Scan::class)->latestOfMany();
+    }
+
+    public function currentScanAccessibilityResults()
+    {
+        return $this->latestScan->first()->with('urlScanAccessibilityResults');
+    }
 }

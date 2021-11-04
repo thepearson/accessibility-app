@@ -15,4 +15,5 @@ yarn-error.log
 /.vscode
 scripts/crawler/node_modules
 scripts/scanner/node_modules
+scripts/worker/node_modules
 scripts/import-rules/node_modules
