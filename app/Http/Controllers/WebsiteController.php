@@ -80,7 +80,47 @@ class WebsiteController extends Controller
         return Inertia::render('Sites/Show', [
             'website' => $website,
             'latestScan' => $latestScan,
-            'violations' => $latestScan->urlScanAccessibilityResults->count()
+            'violations' => ($latestScan) ? $latestScan->urlScanAccessibilityResults->count() : null
+        ]);
+    }
+
+    public function accessibility(Request $request, $id) 
+    {
+        $website = Website::find($id);
+        $latestScan = $website->latestScan;
+
+        return Inertia::render('Sites/Accessibility', [
+            'website' => $website,
+            'latestScan' => $latestScan,
+            'violations' => ($latestScan) ? $latestScan->urlScanAccessibilityResults->count() : null
+        ]);
+    }
+
+    public function performance(Request $request, $id) 
+    {
+        $website = Website::find($id);
+        $latestScan = $website->latestScan;
+
+        return Inertia::render('Sites/Performance', [
+            'website' => $website,
+            'latestScan' => $latestScan,
+            'violations' => ($latestScan) ? $latestScan->urlScanAccessibilityResults->count() : null
+        ]);
+    }
+
+    public function scans(Request $request, $id) 
+    {
+        $website = Website::find($id);
+        $latestScan = $website->latestScan;
+        if ($latestScan) {
+            $latestScan = $latestScan->first();
+        }
+
+        return Inertia::render('Sites/Scans', [
+            'website' => $website,
+            'active_scan' => $website->hasActiveScan(),
+            'scans' => $website->scans,
+            'latestScan' => $latestScan
         ]);
     }
 }

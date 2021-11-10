@@ -22,11 +22,13 @@ class UrlController extends Controller
 
         $crawl = Crawl::where('website_id', $id)
             ->whereIn('status', ['queued', 'processing'])->first();
-    
+
+        $recentlyAdded = Url::where('website_id', $id)->orderByDesc('created_at')->first();
         return Inertia::render('Sites/Urls', [
             'website' => $website,
-            'urls' => $website->urls()->with('latestUrlScan.urlScanAccessibilityResults')->paginate(8),
+            'urls' => $website->urls()->orderByDesc('created_at')->with('latestUrlScan.urlScanAccessibilityResults')->paginate(8),
             'active_crawl' => $crawl,
+            'latest_url' => $recentlyAdded,
         ]);
     }
 

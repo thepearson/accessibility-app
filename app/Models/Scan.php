@@ -25,6 +25,21 @@ class Scan extends Model
         return $this->hasMany(UrlScan::class);
     }
 
+
+    /**
+     * Returns true if the scan is active, ie has any pending tasks
+     * @return bool
+     */
+    public function isActive()
+    {
+        foreach ($this->urlScans as $scan) {
+            if (in_array($scan->status, ['queued', 'processing'])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * UrlScan relationship
      */

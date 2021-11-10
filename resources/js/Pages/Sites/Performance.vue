@@ -8,7 +8,7 @@
         </template>
 
         <div class="py-12 pt-1">
-            <h2>Overview</h2>
+            <h2>Performance</h2>
         </div>
 
         <template #menu>
@@ -34,7 +34,7 @@
 
         data() {
             return {
-                title: "Overview"
+                title: "Performance"
             }
         },
 

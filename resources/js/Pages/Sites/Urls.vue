@@ -1,24 +1,35 @@
 <template>
-    <app-layout>
+    <dashboard-layout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ website.name }} URLs
-            </h2>
+            <div class="w-1/2">
+                <h2 class="font-semibold text-gray-800 text-xl leading-tight">{{ website.name }} : {{ title }}</h2>
+                <h3 class="text-gray-500 text-sm leading-10">{{ website.base_url }}</h3>
+            </div>
+        </template>
+
+        <template #menu>
+            <site-nav :current="website.id" />
+        </template>
+
+        <template #activeTask v-if="active_crawl">
+            <loader :task="'Crawling site'" :total="active_crawl.total" :message="loaderMessage" :current="active_crawl.complete" />
+        </template>
+
+        <template #contextButtons>
+            <div class="p-6 mb-6 flex justify-end">
+                <jet-button :disabled="active_crawl" class="cursor-pointer ml-6 text-sm text-white-500" @click="scanSiteUrls()">
+                    Automaticly discover
+                    <div class="loader" v-show="active_crawl">working...</div>
+                </jet-button>
+
+                <jet-button class="cursor-pointer ml-6 text-sm text-white-500" @click="addUrl()">
+                    Manually add a url
+                </jet-button>
+            </div>
         </template>
 
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="p-6 mb-6 flex justify-end">
-                    <jet-button :disabled="active_crawl" class="cursor-pointer ml-6 text-sm text-white-500" @click="scanSiteUrls()">
-                        Automaticly discover
-
-                        <div class="loader" v-show="active_crawl">working...</div>
-                    </jet-button>
-
-                    <jet-button class="cursor-pointer ml-6 text-sm text-white-500" @click="addUrl()">
-                        Manually add a url
-                    </jet-button>
-                </div>
+            <div class="sm:px-6 lg:px-8">
                 <template v-if="urls.total > 0">
                     <span>Showing {{urls.data.length}} of {{urls.total}} urls</span>
                     
@@ -48,7 +59,7 @@
                 </template>
             </div>
         </div>
-    </app-layout>    
+    </dashboard-layout>    
     
     <!-- Scan for URLs Confirmation Modal -->
     <jet-confirmation-modal :show="showScanModal" @close="showScanModal = false">
@@ -118,15 +129,16 @@
 </template>
 
 <script>
-    import AppLayout from '@/Layouts/AppLayout'
+    import DashboardLayout from '@/Layouts/DashboardLayout'
     import JetButton from '@/Jetstream/Button'
     import JetConfirmationModal from '@/Jetstream/ConfirmationModal'
     import JetSecondaryButton from '@/Jetstream/SecondaryButton'
     import JetDangerButton from '@/Jetstream/DangerButton'
     import ModalForm from '@/Components/ModalForm'
-    import Progress from '@/Components/Progress'
+    import Loader from '@/Components/Loader'
     import Pagination from '@/Components/Pagination'
     import JetInput from '@/Jetstream/Input'
+    import SiteNav from '@/Components/SiteNav'
     import JetInputError from '@/Jetstream/InputError'
     import JetLabel from '@/Jetstream/Label'
 
@@ -135,11 +147,13 @@
             'website',
             'urls',
             'active_crawl',
+            'latest_url'
         ],
         components: {
-            AppLayout,
+            DashboardLayout,
             JetButton,
-            Progress,
+            Loader,
+            SiteNav,
             JetInput,
             JetInputError,
             JetLabel,
@@ -148,6 +162,16 @@
             JetConfirmationModal,
             JetSecondaryButton,
             JetDangerButton,
+        },
+        computed: {
+            loaderMessage() {
+                if (this.latest_url) {
+                    return `Scanned ${this.active_crawl.complete} of ${this.active_crawl.total} - Last added ${this.latest_url.url}`;
+                }
+                else {
+                    return null;
+                }
+            }
         },
         mounted() {
             if (this.active_crawl) {
@@ -161,6 +185,7 @@
 
         data() {
             return {
+                title: "URLs",
                 interval: null,
                 deleteUrlForm: this.$inertia.form(),
                 scanForm: this.$inertia.form(),

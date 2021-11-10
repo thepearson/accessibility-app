@@ -45,7 +45,7 @@ class Website extends Model
      */
     public function scans()
     {
-        return $this->hasMany(Scan::class);
+        return $this->hasMany(Scan::class)->with('urlScanAccessibilityResults');
     }
 
     
@@ -57,6 +57,23 @@ class Website extends Model
         return $this->hasOne(Scan::class)->latestOfMany();
     }
 
+
+    /**
+     * Returns true if the latest scan is active.
+     */
+    public function hasActiveScan()
+    {
+        $scan = $this->latestScan;
+        if ($scan) {
+            return $scan->first()->isActive();
+        }
+        return false;
+    }
+
+
+    /**
+     * Get the current scan.
+     */
     public function currentScanAccessibilityResults()
     {
         return $this->latestScan->first()->with('urlScanAccessibilityResults');
