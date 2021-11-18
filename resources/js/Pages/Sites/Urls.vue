@@ -40,9 +40,15 @@
                                     <inertia-link :href="route('sites.show', {id: url.id})"><h2 class="text-sm font-bold mb-2 text-gray-800">{{url.url}}</h2></inertia-link>
                                 </div>
                                 <div class="flex flex-col items-end">
-                                    <button class="cursor-pointer ml-6 text-sm text-red-500" @click="confirmUrlDeletion(url)">
+
+                                    <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                                        <input type="checkbox" name="toggle" v-bind:id="'toggle-' + url.id" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
+                                        <label v-bind:for="'toggle-' + url.id" class="toggle-label block overflow-hidden h-6 rounded-full bg-red-300 cursor-pointer"></label>
+                                    </div>
+                                    
+                                    <!-- <button class="cursor-pointer ml-6 text-sm text-red-500" @click="confirmUrlDeletion(url)">
                                         Delete
-                                    </button>
+                                    </button> -->
                                 </div>
                             </div>
                         </div>

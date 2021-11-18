@@ -48,6 +48,57 @@ class UrlScanController extends Controller
     }
 
     /**
+     * Parses a given mime into a db category
+     */
+    public function parseMimeToCategory($mime) {
+        switch ($mime) {
+            case 'text/html':
+            case 'text/xml':
+                return 'document';
+            case 'text/css':
+                return 'style';
+            case 'application/javascript':
+                return 'script';
+            case 'image/png':
+            case 'image/svg+xml':
+            case 'image/gif':
+            case 'image/jpeg':
+            case 'image/webp':
+            case 'image/bmp':
+            case 'image/tiff':
+            case 'image/x-icon':
+                return 'image';
+            case 'font/ttf':
+            case 'font/woff':
+            case 'font/woff2':
+                return 'font';
+            case 'audio/ac3':
+            case 'audio/aac':
+            case 'audio/aiff':
+            case 'audio/basic':
+            case 'audio/flac':
+            case 'audio/midi':
+            case 'audio/mpeg':
+            case 'audio/mp4':
+            case 'audio/mpeg3':
+            case 'audio/ogg':
+            case 'audio/vorbis':
+            case 'audio/wav':
+            case 'audio/webm':
+            case 'audio/mp3':
+                return 'audio';
+            case 'video/h261':
+            case 'video/h263':
+            case 'video/h264':
+            case 'video/h265':
+            case 'video/mp4':
+                return 'video';
+            default:
+                return 'other';
+        }
+    }
+
+    /**
      * Allows a worker to update the current status of a url scan
      * 
      * This should be passed through the EnsureScanTokenIsValid middleware,
@@ -86,15 +137,43 @@ class UrlScanController extends Controller
             }
         }
 
-        foreach ($data['metrics']['responses'] as $response) {
+        // $table->foreignId('scan_id')->constrained('scans')->cascadeOnDelete(); 
+        // $table->foreignId('url_scan_id')->constrained('url_scans')->cascadeOnDelete();
+        // $table->foreignId('url_id')->constrained('urls')->cascadeOnDelete(); 
+        // $table->string('uri', 4096);
+        // $table->string('mime');
+        // $table->enum('category', ['image', 'document', 'script', 'style', 'font', 'video', 'audio', 'other'])->default('other');
+        // $table->integer('status')->default(200);
+        // $table->float('duration', 8, 2)->default(0.00);
+        // $table->bigInteger('size')->default(0);
+        // $table->string('protocol');
+
+        /*  name: metric.name,
+            url: {
+                protocol: url.protocol,
+                hostname: url.hostname,
+                path: url.pathname,
+                query: url.search,
+                mime: mime.lookup(url.pathname),
+            },
+            initiatorType: metric.initiatorType,
+            duration: metric.duration.toFixed(2),
+            transferSize: metric.transferSize
+        */
+
+        foreach ($data['metrics'] as $metric) {
             $urlScanResponse = new UrlScanRequest;
             $urlScanResponse->url_scan_id = $urlScan->id;
             $urlScanResponse->scan_id = $urlScan->scan_id;
             $urlScanResponse->url_id = $urlScan->url_id;
-            $urlScanResponse->status = $response['status'];
-            $urlScanResponse->size = $response['size'];
-            $urlScanResponse->mime = $response['mime'];
-            $urlScanResponse->uri = $response['uri'];
+            $urlScanResponse->uri = $metric['name'];
+            $urlScanResponse->mime = $metric['url']['mime'];
+            $urlScanResponse->category = $this->parseMimeToCategory($metric['url']['mime']);
+            $urlScanResponse->status = 200;
+            $urlScanResponse->duration = $metric['duration'];
+            $urlScanResponse->size = $metric['transferSize'];
+            $urlScanResponse->protocol = $metric['url']['protocol'];
+            
             $urlScanResponse->save();
         }
 

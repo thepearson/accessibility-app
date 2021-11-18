@@ -17,6 +17,7 @@ class CreateUrlsTable extends Migration
             $table->id();
             $table->foreignId('website_id')->constrained('websites')->cascadeOnDelete();
             $table->string('url', 4096);
+            $table->boolean('enabled')->default(true);
             $table->timestamps();
         });
     }

@@ -48,7 +48,7 @@ class WebsiteController extends Controller
         $scan->save();
 
         // Lets add the URLS to the scan
-        foreach ($website->urls as $url) {
+        foreach ($website->urls->where('enabled', true) as $url) {
             $urlScan = UrlScan::create($scan, $url);
             
             $canonicalUrl = rtrim($website->base_url, '/') . $url->url;
@@ -77,7 +77,40 @@ class WebsiteController extends Controller
         $website = Website::find($id);
         $latestScan = $website->latestScan;
 
+        /*
+        // Order site pages by total size
+            SELECT 
+                urls.url, 
+                SUM(sr.size) AS size 
+            FROM url_scan_requests AS sr 
+            INNER JOIN urls 
+                ON sr.url_id = urls.id 
+            WHERE sr.scan_id=1 
+                AND sr.status=200 
+            GROUP BY urls.url 
+            ORDER BY size;
+        */
+
+
+        /*
+        // Group wb requests by size and mime when given a scan_id.
+            SELECT 
+                urls.url, 
+                sr.mime, 
+                SUM(sr.size) 
+            FROM url_scan_requests AS sr 
+            INNER JOIN urls 
+                ON sr.url_id = urls.id 
+            WHERE sr.scan_id=1 
+                AND sr.status=200 
+            GROUP BY sr.url_id, sr.mime;
+        */
+
         return Inertia::render('Sites/Show', [
+            'title' => 'Overview',
+            'data' => [
+
+            ],
             'website' => $website,
             'latestScan' => $latestScan,
             'violations' => ($latestScan) ? $latestScan->urlScanAccessibilityResults->count() : null

@@ -20,8 +20,11 @@ class CreateUrlScanRequestsTable extends Migration
             $table->foreignId('url_id')->constrained('urls')->cascadeOnDelete(); 
             $table->string('uri', 4096);
             $table->string('mime');
-            $table->integer('status');
-            $table->bigInteger('size');
+            $table->enum('category', ['image', 'document', 'script', 'style', 'font', 'video', 'audio', 'other'])->default('other');
+            $table->integer('status')->default(200);
+            $table->float('duration', 8, 2)->default(0.00);
+            $table->bigInteger('size')->default(0);
+            $table->string('protocol');
             $table->timestamps();
         });
     }

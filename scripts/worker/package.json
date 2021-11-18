@@ -12,6 +12,7 @@
     "@axe-core/puppeteer": "^4.2.1",
     "amqplib": "^0.8.0",
     "axios": "^0.21.1",
+    "mime-types": "^2.1.34",
     "puppeteer": "^10.4.0"
   }
 }

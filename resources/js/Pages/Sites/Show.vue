@@ -8,7 +8,7 @@
         </template>
 
         <div class="py-12 pt-1">
-            <h2>Overview</h2>
+            <h2>{{ title }}</h2>
         </div>
 
         <template #menu>
@@ -26,6 +26,7 @@
             'website',
             'latestScan',
             'urls',
+            'title',
         ],
         components: {
             DashboardLayout,
@@ -34,7 +35,7 @@
 
         data() {
             return {
-                title: "Overview"
+
             }
         },
 

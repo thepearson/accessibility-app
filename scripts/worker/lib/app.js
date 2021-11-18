@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer');
 const { AxePuppeteer } = require('@axe-core/puppeteer');
 const api = require('./api.js');
 const UrlParser = require('url');
+const mime = require('mime-types')
 
 const VIEWPORT = { width: 1920, height: 1080, deviceScaleFactor: 2 };
 const LOGGING = process.env.LOGGING || 0;
@@ -10,40 +11,29 @@ const log = (msg) => {
     if (LOGGING > 0) console.log(msg)
 };
 
-
-function formatRequests(requests, includeRaw = false) {
-    const data = {};
-    data.totalRequests = requests.length;
-    data.requestUrls = requests;
-    return data;
-  }
-  
-function formatResponses(responses, includeRaw = false) {
+const formatMetrics = async function(metrics) {
     const data = [];
-    for (let response of responses) {
-
-        if (!response.headers.hasOwnProperty('content-type')) {
-            continue;
+    for (let metric of metrics) {
+        if (['navigation', 'resource'].indexOf(metric.entryType) > -1) {
+            const url = new URL(metric.name);
+            data.push({
+                name: metric.name,
+                url: {
+                    protocol: url.protocol.slice(0, -1),
+                    hostname: url.hostname,
+                    path: url.pathname,
+                    query: url.search,
+                    mime: (url.pathname.slice(-5, -1).indexOf('.') > -1) ? mime.lookup(url.pathname) : 'text/html',
+                },
+                initiatorType: metric.initiatorType,
+                duration: metric.duration.toFixed(2),
+                transferSize: metric.transferSize
+            });
         }
-
-        const packet = {
-            uri: (response.url.indexOf('data') === 0) ? 'datauri' : response.url,
-            status: response.status,
-            size: 0,
-        };
-
-        const mime = response.headers['content-type'].split(';')[0];
-        packet.mime = mime;
-        if (response.headers.hasOwnProperty('content-length')) {
-            packet.size += parseInt(response.headers['content-length']);
-        }
-
-        data.push(packet);
     }
-
     return data;
 }
-  
+
 
 /**
  *
@@ -52,33 +42,20 @@ function formatResponses(responses, includeRaw = false) {
  * @param {*} callback
  */
 const scan = async function (page, url, options, resultsCallback) {
-    const requests = [];
-    const responses = [];
-
-    page.on("request", (request) => {
-        requests.push(request.url());
-    });
-
-    page.on("response", (response) => {
-        const resp = {
-            headers: response.headers(),
-            url: response.url(),
-            status: response.status(),
-        }
-        responses.push(resp);
-    });
-
     await page.goto(url, {
         waitUntil: 'networkidle0'
     });
     
     const results = await new AxePuppeteer(page).analyze();
-    const metrics = await page.metrics();
-    return resultsCallback(url, results, { 
-        stats: metrics,
-        requests: formatRequests(requests, true),
-        responses: formatResponses(responses, true)
-    }, options);
+    const metrics = await formatMetrics(
+        JSON.parse(
+            await page.evaluate(
+                () => JSON.stringify(performance.getEntries())
+            )
+        )
+    );
+
+    return resultsCallback(url, results, metrics, options);
 }
 
 
@@ -109,9 +86,7 @@ const handleScanResults = async function (url, results, metrics, options) {
         metrics: metrics,
     };
 
-    //console.log(JSON.stringify(data_to_send));
-
-    //return;
+    console.log(JSON.stringify(data_to_send));
 
     log('Scanned ' + url + ', found ' + data.length + ' violations');
 
