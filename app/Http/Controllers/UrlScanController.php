@@ -28,6 +28,7 @@ class UrlScanController extends Controller
                 'required',
                 Rule::in(['processing', 'success', 'failed'])
             ],
+            'message' => 'nullable|string',
         ];
 
         // Validate the body of the request
@@ -42,6 +43,7 @@ class UrlScanController extends Controller
         // Update the crawl
         $urlScan = $request->get('url_scan');
         $urlScan->status = $data['status'];
+        $urlScan->messages = $data['messages'] ?: null;
         $urlScan->save();
 
         return response()->json($urlScan);

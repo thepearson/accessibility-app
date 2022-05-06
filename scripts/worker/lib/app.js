@@ -86,7 +86,7 @@ const handleScanResults = async function (url, results, metrics, options) {
         metrics: metrics,
     };
 
-    console.log(JSON.stringify(data_to_send));
+    //console.log(JSON.stringify(data_to_send));
 
     log('Scanned ' + url + ', found ' + data.length + ' violations');
 
@@ -265,6 +265,7 @@ const accessibleScan = async function (options) {
             `${options.meta.hostname}${options.meta.update}`,
             {
                 status: 'processing',
+                messages: {},
             },
             options.meta.token
         );
@@ -289,6 +290,24 @@ const accessibleScan = async function (options) {
     } catch (e) {
         // do nothing
         console.log(e);
+
+        // Update
+        if (options.meta.cli !== true) {
+            await api.post(
+                `${options.meta.hostname}${options.meta.update}`,
+                {
+                    status: 'failed',
+                    messages: e.message
+                },
+                options.meta.token
+            );
+        }
+
+        return {
+            start_time: startTime,
+            end_time: Date.now(),
+            data: data
+        }
     }
 
     //
@@ -300,6 +319,7 @@ const accessibleScan = async function (options) {
             `${options.meta.hostname}${options.meta.update}`,
             {
                 status: 'success',
+                messages: {},
             },
             options.meta.token
         );
@@ -344,6 +364,7 @@ const crawlSite = async function (options) {
     });
 
     const page = await browser.newPage();
+    await page.setCacheEnabled(false);
     await page.setBypassCSP(true);
 
     if (VIEWPORT) {

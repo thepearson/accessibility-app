@@ -20,7 +20,7 @@ class CreateUrlScansTable extends Migration
             $table->enum('status', ['queued', 'processing', 'success', 'failed']);
             $table->string('token');
             $table->json('data');
-            $table->json('messages');
+            $table->json('messages')->nullable();
             $table->timestamps();
         });
     }
